@@ -1,9 +1,7 @@
 import { compare, hash } from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { cookies, headers } from 'next/headers';
-import { PrismaClient } from '@prisma/client';
-import { NextRequest, NextResponse } from 'next/server';
-import { jwtVerify } from 'jose';
+import { PrismaClient } from '@/lib/generated/prisma';
 
 const prisma = new PrismaClient();
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
@@ -17,27 +15,27 @@ export async function comparePasswords(password: string, hashedPassword: string)
   return compare(password, hashedPassword);
 }
 
-export async function createToken(userId: string) {
-  return jwt.sign({ userId }, JWT_SECRET, { expiresIn: '7d' });
+export function generateToken(userId: string): string {
+  return jwt.sign({ userId }, JWT_SECRET, { expiresIn: '24h' });
 }
 
-export async function verifyToken(token: string) {
+export async function verifyToken(token: string): Promise<{ userId: string } | null> {
   try {
-    return jwt.verify(token, JWT_SECRET) as { userId: string };
+    const decoded = jwt.verify(token, JWT_SECRET) as { userId: string };
+    return decoded;
   } catch (error) {
+    console.error('Token verification failed:', error);
     return null;
   }
 }
 
-export function setAuthCookie(response: NextResponse, token: string): void {
-  response.cookies.set({
-    name: 'token',
-    value: token,
+export function setAuthCookie(token: string) {
+  const cookieStore = cookies();
+  cookieStore.set(COOKIE_NAME, token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'strict',
-    maxAge: 24 * 60 * 60, // 24 hours
-    path: '/',
+    maxAge: 60 * 60 * 24 * 7, // 7 days
   });
 }
 
@@ -76,39 +74,4 @@ export async function getCurrentUser() {
     console.error('Error getting current user:', error);
     return null;
   }
-}
-
-export async function getUserIdFromToken(request: NextRequest): Promise<string> {
-  const token = request.cookies.get('token')?.value;
-  
-  if (!token) {
-    throw new Error('No token found');
-  }
-
-  try {
-    const secret = new TextEncoder().encode(process.env.JWT_SECRET || 'your-secret-key');
-    const { payload } = await jwtVerify(token, secret);
-    
-    if (!payload.sub) {
-      throw new Error('Invalid token payload');
-    }
-
-    return payload.sub as string;
-  } catch (err) {
-    console.error('Token verification failed:', err);
-    throw new Error('Invalid token');
-  }
-}
-
-export function clearAuthCookie(response: NextResponse): void {
-  response.cookies.delete('token');
-}
-
-export function getAuthToken(request: NextRequest): string | undefined {
-  return request.cookies.get('token')?.value;
-}
-
-export function getAuthHeader(request: NextRequest): string | undefined {
-  const authHeader = request.headers.get('authorization');
-  return authHeader?.startsWith('Bearer ') ? authHeader.substring(7) : undefined;
 }

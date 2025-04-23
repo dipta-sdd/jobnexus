@@ -1,5 +1,5 @@
 import { getCurrentUser } from '@/lib/auth';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '@/lib/generated/prisma';
 import { redirect } from 'next/navigation';
 
 const prisma = new PrismaClient();
@@ -12,7 +12,6 @@ type Reminder = {
 };
 
 export default async function DashboardPage() {
-  console.log('here2');
   const user = await getCurrentUser();
 
   if (!user) {

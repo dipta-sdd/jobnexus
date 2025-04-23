@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
+import { verifyToken } from '@/lib/auth';
+import { PrismaClient } from '@/lib/generated/prisma';
+
+const prisma = new PrismaClient();
 
 export async function GET(request: NextRequest) {
   try {
     // Get the token from cookies
-    const cookieStore = cookies();
     const token = request.cookies.get('token')?.value;
 
     if (!token) {
@@ -14,18 +16,32 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // In a real application, you would:
-    // 1. Verify the JWT token
-    // 2. Fetch user data from your database
-    // 3. Return the user data
+    // Verify the token
+    const decoded = await verifyToken(token);
+    if (!decoded || !decoded.userId) {
+      return NextResponse.json(
+        { message: 'Invalid token' },
+        { status: 401 }
+      );
+    }
 
-    // For now, we'll return a mock user
-    // TODO: Replace with actual user data from your database
-    const user = {
-      id: '1',
-      name: 'John Doe',
-      email: 'john@example.com',
-    };
+    // Fetch user from database
+    const user = await prisma.user.findUnique({
+      where: { id: decoded.userId },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        createdAt: true,
+      },
+    });
+
+    if (!user) {
+      return NextResponse.json(
+        { message: 'User not found' },
+        { status: 404 }
+      );
+    }
 
     return NextResponse.json(user);
   } catch (error) {
