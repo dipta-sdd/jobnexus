@@ -12,6 +12,7 @@ type Reminder = {
 };
 
 export default async function DashboardPage() {
+  console.log('here2');
   const user = await getCurrentUser();
 
   if (!user) {
