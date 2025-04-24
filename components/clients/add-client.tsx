@@ -8,17 +8,19 @@ import { useState } from 'react';
 
 
   
-  const clientSchema = z.object({
-    name: z.string().min(1, 'Name is required'),
-    email: z.string().email('Invalid email address'),
-    phone: z.string().min(1, 'Phone number is required'),
-    company: z.string().optional(),
-    notes: z.string().optional(),
-  });
-  
-  type ClientFormData = z.infer<typeof clientSchema>;
+const clientSchema = z.object({
+  name: z.string().min(1, 'Name is required'),
+  email: z.string().email('Invalid email address'),
+  phone: z.string().min(1, 'Phone number is required'),
+  company: z.string().optional(),
+  notes: z.string().optional(),
+});
 
-export default function AddClient(){
+type ClientFormData = z.infer<typeof clientSchema>;
+
+
+
+export default function AddClient( { onClose } : { onClose: () => void;}){
 
     const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -36,13 +38,10 @@ export default function AddClient(){
       setIsSubmitting(true);
       const response = await api.post('/clients', data);
       const client = response.data;
-      
       console.log(client);
-      
       toast.success('Client added successfully');
-      setIsModalOpen(false);
+      onClose();
       reset();
-      // Refresh the page or update the clients list
       window.location.reload();
     } catch (error) {
       toast.error('Failed to create client');
@@ -142,7 +141,7 @@ export default function AddClient(){
             <button
               type="button"
               onClick={() => {
-                setIsModalOpen(false);
+                onClose();
                 reset();
               }}
               className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-colors"

@@ -31,13 +31,13 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen bg-white dark:bg-gray-900`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen bg-gray-50 dark:bg-gray-900`}
       >
         <UserProvider>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             <div className="flex min-h-screen flex-col">
               <Navbar />
-              <main className="flex-1 container mx-auto px-4 py-8">
+              <main className="flex-1 container mx-auto px-4 py-8 bg-gray-50 dark:bg-gray-900">
                 {children}
               </main>
             </div>

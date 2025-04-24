@@ -1,48 +1,45 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Filter, Plus, Search } from 'lucide-react';
 import Modal from '@/components/ui/Modal';
+import api from '@/lib/axios';
+import { Project } from '@/lib/types';
 import AddProject from '@/components/projects/add-project';
 
-interface Project {
-  id: string;
-  title: string;
-  budget: number;
-  deadline: Date;
-  status: string;
-  clientId: string;
-  client: {
-    id: string;
-    name: string;
-  };
-  createdAt: Date;
-  updatedAt: Date;
-}
+
 
 export default function ProjectsPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [view, setView] = useState('grid'); // grid or list
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [clients, setClients] = useState([]);
+  const [projects, setProjects] = useState<Project[]>([]);
 
-  const projects: Project[] = [
-    // Sample data - replace with actual data from API
-    {
-      id: '1',
-      title: 'Website Redesign',
-      budget: 5000,
-      deadline: new Date('2024-06-01'),
-      status: 'In Progress',
-      clientId: '1',
-      client: {
-        id: '1',
-        name: 'Acme Inc',
-      },
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-    // Add more sample projects as needed
-  ];
+  useEffect(()=>{
+    fetchProjects();
+    fetchClients();
+  },[]);
+
+  const fetchClients = async ()=>{
+    try{
+        const res = await api.get('/clients');
+        setClients(res.data);
+    }catch(error){
+        console.log(error);
+    }
+  }
+
+  const fetchProjects = async () =>{
+    try{
+      const res = await api.get('/projects');
+      setProjects(res.data);
+    } catch(error){
+      console.error(error);
+    }
+  }
+
+  
 
   // Filter projects based on search query
   const filteredProjects = projects.filter((project) => {
@@ -186,7 +183,7 @@ export default function ProjectsPage() {
                       Budget: ${project.budget.toLocaleString()}
                     </p>
                     <p className="text-sm text-gray-500 dark:text-gray-400">
-                      Deadline: {project.deadline.toLocaleDateString()}
+                      Deadline: {new Date(project.updatedAt).toLocaleDateString()}
                     </p>
                   </div>
                 </div>
@@ -194,7 +191,7 @@ export default function ProjectsPage() {
             </div>
           ) : (
             <div className="bg-white dark:bg-gray-800 shadow-sm border border-gray-100 dark:border-gray-700 overflow-auto">
-              <table className="divide-y divide-gray-200 dark:divide-gray-700 w-100">
+              <table className="divide-y divide-gray-200 dark:divide-gray-700 min-w-full">
                 <thead className="bg-gray-50 dark:bg-gray-700/50">
                   <tr>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
@@ -237,7 +234,7 @@ export default function ProjectsPage() {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm text-gray-500 dark:text-gray-400">
-                          {project.deadline.toLocaleDateString()}
+                        {new Date(project.updatedAt).toLocaleDateString()}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
@@ -284,7 +281,7 @@ export default function ProjectsPage() {
         onClose={() => setIsModalOpen(false)}
         title="Add New Project"
       >
-        <AddProject />
+        <AddProject onClose={()=> setIsModalOpen(false)} clients={clients} />
       </Modal>
     </div>
   );
