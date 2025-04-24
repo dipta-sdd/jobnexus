@@ -251,7 +251,7 @@ export default function ClientsPage() {
         }}
         title="Add New Client"
       >
-        <AddClient/>
+        <AddClient onClose={()=>{setIsModalOpen(false)}} />
       </Modal>
     </div>
   );

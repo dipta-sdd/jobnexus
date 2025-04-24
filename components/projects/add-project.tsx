@@ -1,192 +1,175 @@
 'use client';
-
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import * as z from 'zod';
+import { toast } from 'react-hot-toast';
+import api from '@/lib/axios';
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { Client } from '@/lib/types';
 
-export default function AddProject() {
-  const router = useRouter();
-  const [formData, setFormData] = useState({
-    title: '',
-    clientId: '',
-    budget: '',
-    deadline: '',
-    status: 'In Progress',
-    description: '',
+const projectSchema = z.object({
+  title: z.string().min(1, 'Title is required'),
+  clientId: z.string().min(1, 'Client is required'),
+  budget: z.string().min(1, 'Budget is required'),
+  deadline: z.string().min(1, 'Deadline is required'),
+  status: z.string().min(1, 'Status is required'),
+});
+
+type ProjectFormData = z.infer<typeof projectSchema>;
+
+interface AddProjectProps {
+  clients: Client[];
+  onClose: () => void;
+}
+
+export default function AddProject({ clients, onClose }: AddProjectProps) {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<ProjectFormData>({
+    resolver: zodResolver(projectSchema),
   });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const onSubmit = async (data: ProjectFormData) => {
     try {
-      const response = await fetch('/api/projects', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          ...formData,
-          budget: parseFloat(formData.budget),
-          deadline: new Date(formData.deadline),
-        }),
+      setIsSubmitting(true);
+      const response = await api.post('/projects', {
+        ...data,
+        budget: parseFloat(data.budget),
+        deadline: new Date(data.deadline),
       });
-
-      if (response.ok) {
-        router.refresh();
-        // Close modal and reset form
-        setFormData({
-          title: '',
-          clientId: '',
-          budget: '',
-          deadline: '',
-          status: 'In Progress',
-          description: '',
-        });
-      } else {
-        console.error('Failed to create project');
-      }
+      toast.success('Project added successfully');
+      onClose();
+      reset();
     } catch (error) {
+      toast.error('Failed to create project');
       console.error('Error creating project:', error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <div>
-        <label
-          htmlFor="title"
-          className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-        >
-          Project Title
+        <label htmlFor="title" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+          Title *
         </label>
-        <input
-          type="text"
-          id="title"
-          value={formData.title}
-          onChange={(e) =>
-            setFormData({ ...formData, title: e.target.value })
-          }
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white sm:text-sm"
-          required
-        />
-      </div>
-
-      <div>
-        <label
-          htmlFor="clientId"
-          className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-        >
-          Client
-        </label>
-        <select
-          id="clientId"
-          value={formData.clientId}
-          onChange={(e) =>
-            setFormData({ ...formData, clientId: e.target.value })
-          }
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white sm:text-sm"
-          required
-        >
-          <option value="">Select a client</option>
-          {/* Add client options dynamically */}
-        </select>
-      </div>
-
-      <div>
-        <label
-          htmlFor="budget"
-          className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-        >
-          Budget
-        </label>
-        <div className="mt-1 relative rounded-md shadow-sm">
-          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <span className="text-gray-500 sm:text-sm">$</span>
-          </div>
+        <div className="mt-1">
           <input
-            type="number"
-            id="budget"
-            value={formData.budget}
-            onChange={(e) =>
-              setFormData({ ...formData, budget: e.target.value })
-            }
-            className="pl-7 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white sm:text-sm"
-            required
-            min="0"
-            step="0.01"
+            id="title"
+            type="text"
+            {...register('title')}
+            className="appearance-none block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 dark:bg-gray-700 dark:text-white sm:text-sm"
+            placeholder="Project Title"
           />
         </div>
+        {errors.title && (
+          <p className="mt-1 text-sm text-red-600">{errors.title.message}</p>
+        )}
       </div>
 
       <div>
-        <label
-          htmlFor="deadline"
-          className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-        >
-          Deadline
+        <label htmlFor="clientId" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+          Client *
         </label>
-        <input
-          type="date"
-          id="deadline"
-          value={formData.deadline}
-          onChange={(e) =>
-            setFormData({ ...formData, deadline: e.target.value })
-          }
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white sm:text-sm"
-          required
-        />
+        <div className="mt-1">
+          <select
+            id="clientId"
+            {...register('clientId')}
+            className="appearance-none block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 dark:bg-gray-700 dark:text-white sm:text-sm"
+          >
+            <option value="">Select a client</option>
+            {clients.map((client) => (
+              <option key={client.id} value={client.id}>
+                {client.name}
+              </option>
+            ))}
+          </select>
+        </div>
+        {errors.clientId && (
+          <p className="mt-1 text-sm text-red-600">{errors.clientId.message}</p>
+        )}
       </div>
 
       <div>
-        <label
-          htmlFor="status"
-          className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-        >
-          Status
+        <label htmlFor="budget" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+          Budget *
         </label>
-        <select
-          id="status"
-          value={formData.status}
-          onChange={(e) =>
-            setFormData({ ...formData, status: e.target.value })
-          }
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white sm:text-sm"
-          required
-        >
-          <option value="In Progress">In Progress</option>
-          <option value="Completed">Completed</option>
-          <option value="On Hold">On Hold</option>
-        </select>
+        <div className="mt-1">
+          <input
+            id="budget"
+            type="number"
+            step="0.01"
+            {...register('budget')}
+            className="appearance-none block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 dark:bg-gray-700 dark:text-white sm:text-sm"
+            placeholder="0.00"
+          />
+        </div>
+        {errors.budget && (
+          <p className="mt-1 text-sm text-red-600">{errors.budget.message}</p>
+        )}
       </div>
 
       <div>
-        <label
-          htmlFor="description"
-          className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-        >
-          Description
+        <label htmlFor="deadline" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+          Deadline *
         </label>
-        <textarea
-          id="description"
-          value={formData.description}
-          onChange={(e) =>
-            setFormData({ ...formData, description: e.target.value })
-          }
-          rows={3}
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white sm:text-sm"
-        />
+        <div className="mt-1">
+          <input
+            id="deadline"
+            type="date"
+            {...register('deadline')}
+            className="appearance-none block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 dark:bg-gray-700 dark:text-white sm:text-sm"
+          />
+        </div>
+        {errors.deadline && (
+          <p className="mt-1 text-sm text-red-600">{errors.deadline.message}</p>
+        )}
       </div>
 
-      <div className="flex justify-end space-x-3">
+      <div>
+        <label htmlFor="status" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+          Status *
+        </label>
+        <div className="mt-1">
+          <select
+            id="status"
+            {...register('status')}
+            className="appearance-none block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 dark:bg-gray-700 dark:text-white sm:text-sm"
+          >
+            <option value="">Select a status</option>
+            <option value="In Progress">In Progress</option>
+            <option value="Completed">Completed</option>
+            <option value="On Hold">On Hold</option>
+          </select>
+        </div>
+        {errors.status && (
+          <p className="mt-1 text-sm text-red-600">{errors.status.message}</p>
+        )}
+      </div>
+
+      <div className="flex justify-end space-x-4">
         <button
           type="button"
-          className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-600"
+          onClick={() => {
+            onClose();
+            reset();
+          }}
+          className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-colors"
         >
           Cancel
         </button>
         <button
           type="submit"
-          className="px-4 py-2 text-sm font-medium text-white bg-emerald-600 border border-transparent rounded-md shadow-sm hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500"
+          disabled={isSubmitting}
+          className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 disabled:opacity-50 transition-colors"
         >
-          Create Project
+          {isSubmitting ? 'Creating...' : 'Create Project'}
         </button>
       </div>
     </form>

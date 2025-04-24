@@ -2,6 +2,7 @@ export interface User {
   id: string;
   email: string;
   name?: string | null;
+  createdAt?: Date;
 }
 
 export interface Client {
@@ -11,9 +12,9 @@ export interface Client {
     phone: string;
     company?: string | null;
     notes?: string | null;
-    projects: Array<{ id: string }>;
+    projects?: Array<{ id: string }> ;
     userId: string;
-    user: { id: string } | null;
+    user?: { id: string };
     createdAt: Date;
     updatedAt: Date;
   }
