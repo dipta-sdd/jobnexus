@@ -9,8 +9,7 @@ interface Client {
   phone: string;
   company?: string | null;
   notes?: string | null;
-  projects: Array<{ id: string }>;
-  userId: string;
+  projects: Array<{ id: string }>; // Simplified project interface
   user: { id: string };
   createdAt: Date;
   updatedAt: Date;
@@ -25,7 +24,7 @@ export default function ClientRow({ client }: ClientRowProps) {
   const projectCount = client.projects.length;
   
   return (
-    <tr  className="hover:bg-gray-50 dark:hover:bg-gray-700/30">
+    <tr key={client.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/30">
       <td className="px-6 py-4 whitespace-nowrap">
         <div className="flex items-center">
           <div className="flex-shrink-0 h-10 w-10">
@@ -42,7 +41,7 @@ export default function ClientRow({ client }: ClientRowProps) {
               {client.name}
             </div>
             <div className="text-sm text-gray-500 dark:text-gray-400">
-              {client.company}
+              {client.company || "No company"}
             </div>
           </div>
         </div>
@@ -56,13 +55,13 @@ export default function ClientRow({ client }: ClientRowProps) {
         </div>
       </td>
       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-        {client.notes}
+        {client.notes || "No notes"}
       </td>
       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
         {projectCount} {projectCount === 1 ? "project" : "projects"}
       </td>
       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-        {client.updatedAt.toLocaleDateString()}
+        {new Date(client.createdAt).toLocaleDateString()}
       </td>
       <td className="px-6 py-4 whitespace-nowrap">
         <span
