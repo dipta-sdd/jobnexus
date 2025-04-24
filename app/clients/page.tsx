@@ -1,15 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Filter, Plus, Search } from "lucide-react";
+import {  Plus, Search } from "lucide-react";
 import ClientRow from "@/components/clients/client-row";
 import ClientCard from "@/components/clients/client-card";
-import Link from "next/link";
 import Modal from '@/components/ui/Modal';
-
 import AddClient from "@/components/clients/add-client";
-import { Client } from "@/lib/types";
 import api from "@/lib/axios";
+import { Client } from '@/lib/types';
 
 
 
@@ -17,7 +15,7 @@ export default function ClientsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [view, setView] = useState("grid"); // grid or list
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [clients, setClients] = useState([])
+  const [clients, setClients] = useState<Client[]>([]);
 
   const fetchClients = async () =>{
     try{
@@ -37,7 +35,7 @@ export default function ClientsPage() {
 
 
   // Filter clients based on search query
-  const filteredClients = clients.filter((client) => {
+  const filteredClients = clients.filter((client: Client) => {
     if (!searchQuery) return true;
     return (
       client.name.toLowerCase().includes(searchQuery.toLowerCase()) ||

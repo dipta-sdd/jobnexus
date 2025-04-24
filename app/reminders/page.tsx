@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Filter, Plus, Search } from 'lucide-react';
+import {  Plus, Search } from 'lucide-react';
 import Modal from '@/components/ui/Modal';
 import AddReminder from '@/components/reminders/add-reminder';
 import api from '@/lib/axios';
