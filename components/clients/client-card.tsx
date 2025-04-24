@@ -72,7 +72,7 @@ export default function ClientCard({ client }: ClientCardProps) {
             </div>
             <div className="flex items-center text-gray-500 dark:text-gray-400">
               <Calendar className="h-4 w-4 mr-1" />
-              <span>Updated: {client.updatedAt.toLocaleDateString()}</span>
+              <span>Updated: {new Date(client.updatedAt).toLocaleDateString()}</span>
             </div>
           </div>
 

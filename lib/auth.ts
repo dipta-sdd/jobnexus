@@ -2,8 +2,12 @@ import { compare, hash } from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { cookies, headers } from 'next/headers';
 import { PrismaClient } from '@/lib/generated/prisma';
+import { NextResponse } from 'next/server';
+import prisma from './prisma';
+import { User } from './types';
 
-const prisma = new PrismaClient();
+
+const prismaClient = new PrismaClient();
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 const COOKIE_NAME = 'token';
 
@@ -50,7 +54,7 @@ export function removeAuthCookie() {
 }
 
 export async function getCurrentUser() {
-  const headersList = headers();
+  const headersList = await headers();
   const userId = headersList.get('x-user-id');
 
   if (!userId) {
@@ -58,7 +62,7 @@ export async function getCurrentUser() {
   }
 
   try {
-    const user = await prisma.user.findUnique({
+    const user = await prismaClient.user.findUnique({
       where: { id: userId },
       select: {
         id: true,
@@ -72,6 +76,43 @@ export async function getCurrentUser() {
     return user;
   } catch (error) {
     console.error('Error getting current user:', error);
+    return null;
+  }
+}
+
+
+export async function cookiesToUser( token){
+  try {
+
+
+    if (!token) {
+      return null;
+    }
+
+    // Verify the token
+    const decoded = await verifyToken(token);
+    if (!decoded || !decoded.userId) {
+      return null;
+    }
+
+    // Fetch user from database
+    const user = await prisma.user.findUnique({
+      where: { id: decoded.userId },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        createdAt: true,
+      },
+    });
+
+    if (!user) {
+      return null;
+    }
+
+    return user;
+  } catch (error) {
+    console.error('Error in /api/auth/me:', error);
     return null;
   }
 }
