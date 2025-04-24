@@ -6,6 +6,7 @@ import Modal from '@/components/ui/Modal';
 import api from '@/lib/axios';
 import { Project } from '@/lib/types';
 import AddProject from '@/components/projects/add-project';
+import ProjectCard from '@/components/projects/project-card';
 
 
 
@@ -57,13 +58,12 @@ export default function ProjectsPage() {
         {/* Header */}
         <div className="bg-white dark:bg-gray-800 shadow-md z-10">
           <div className="px-4 md:px-6 lg:px-8 py-4">
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+          <div className="flex flex-row md:items-center md:justify-between flex-wrap gap-2">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white min-w-min">
                 Projects
               </h1>
 
-              <div className="mt-4 md:mt-0 flex flex-wrap gap-2 items-center">
-                <div className="relative flex-1 min-w-[200px]">
+              <div className="relative flex-1 md:flex-none md:ml-auto order-3 md:order-none min-w-full md:min-w-xs">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <Search className="h-5 w-5 text-gray-400" />
                   </div>
@@ -76,7 +76,7 @@ export default function ProjectsPage() {
                   />
                 </div>
 
-                <div className="flex items-center gap-2 flex-1 md:flex-none">
+                <div className="flex items-center gap-2 ml-auto md:ml-0">
                   <button
                     onClick={() => setView('grid')}
                     className={`p-2 rounded-md ${
@@ -123,13 +123,12 @@ export default function ProjectsPage() {
                   </button>
                   <button
                     onClick={() => setIsModalOpen(true)}
-                    className="inline-flex flex-1 md:flex-none items-center flex-nowrap px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500"
+                    className="inline-flex items-center flex-nowrap px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500"
                   >
                     <Plus className="h-5 w-5 mr-2" />
                     Add Project
                   </button>
                 </div>
-              </div>
             </div>
           </div>
         </div>
@@ -163,30 +162,7 @@ export default function ProjectsPage() {
           {view === 'grid' ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredProjects.map((project) => (
-                <div
-                  key={project.id}
-                  className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6"
-                >
-                  <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                      {project.title}
-                    </h3>
-                    <span className="px-2 py-1 text-xs font-medium rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-100">
-                      {project.status}
-                    </span>
-                  </div>
-                  <div className="space-y-2">
-                    <p className="text-sm text-gray-500 dark:text-gray-400">
-                      Client: {project.client.name}
-                    </p>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">
-                      Budget: ${project.budget.toLocaleString()}
-                    </p>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">
-                      Deadline: {new Date(project.updatedAt).toLocaleDateString()}
-                    </p>
-                  </div>
-                </div>
+                <ProjectCard key={project.id} project={project}/>
               ))}
             </div>
           ) : (

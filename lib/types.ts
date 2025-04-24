@@ -53,12 +53,15 @@ export interface Reminder {
   title: string;
   notes?: string | null;
   dueDate: Date;
+  status: string;
   clientId?: string | null;
   client?: Client | null;
   projectId?: string | null;
   project?: Project | null;
   userId: string;
   user: User;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 // Types for creating new records

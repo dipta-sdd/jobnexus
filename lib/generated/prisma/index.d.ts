@@ -3699,9 +3699,12 @@ export namespace Prisma {
     title: string | null
     notes: string | null
     dueDate: Date | null
+    status: string | null
     clientId: string | null
     projectId: string | null
     userId: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
   }
 
   export type ReminderMaxAggregateOutputType = {
@@ -3709,9 +3712,12 @@ export namespace Prisma {
     title: string | null
     notes: string | null
     dueDate: Date | null
+    status: string | null
     clientId: string | null
     projectId: string | null
     userId: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
   }
 
   export type ReminderCountAggregateOutputType = {
@@ -3719,9 +3725,12 @@ export namespace Prisma {
     title: number
     notes: number
     dueDate: number
+    status: number
     clientId: number
     projectId: number
     userId: number
+    createdAt: number
+    updatedAt: number
     _all: number
   }
 
@@ -3731,9 +3740,12 @@ export namespace Prisma {
     title?: true
     notes?: true
     dueDate?: true
+    status?: true
     clientId?: true
     projectId?: true
     userId?: true
+    createdAt?: true
+    updatedAt?: true
   }
 
   export type ReminderMaxAggregateInputType = {
@@ -3741,9 +3753,12 @@ export namespace Prisma {
     title?: true
     notes?: true
     dueDate?: true
+    status?: true
     clientId?: true
     projectId?: true
     userId?: true
+    createdAt?: true
+    updatedAt?: true
   }
 
   export type ReminderCountAggregateInputType = {
@@ -3751,9 +3766,12 @@ export namespace Prisma {
     title?: true
     notes?: true
     dueDate?: true
+    status?: true
     clientId?: true
     projectId?: true
     userId?: true
+    createdAt?: true
+    updatedAt?: true
     _all?: true
   }
 
@@ -3834,9 +3852,12 @@ export namespace Prisma {
     title: string
     notes: string | null
     dueDate: Date
+    status: string
     clientId: string | null
     projectId: string | null
     userId: string
+    createdAt: Date
+    updatedAt: Date
     _count: ReminderCountAggregateOutputType | null
     _min: ReminderMinAggregateOutputType | null
     _max: ReminderMaxAggregateOutputType | null
@@ -3861,9 +3882,12 @@ export namespace Prisma {
     title?: boolean
     notes?: boolean
     dueDate?: boolean
+    status?: boolean
     clientId?: boolean
     projectId?: boolean
     userId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
     client?: boolean | Reminder$clientArgs<ExtArgs>
     project?: boolean | Reminder$projectArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
@@ -3874,9 +3898,12 @@ export namespace Prisma {
     title?: boolean
     notes?: boolean
     dueDate?: boolean
+    status?: boolean
     clientId?: boolean
     projectId?: boolean
     userId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
     client?: boolean | Reminder$clientArgs<ExtArgs>
     project?: boolean | Reminder$projectArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
@@ -3887,9 +3914,12 @@ export namespace Prisma {
     title?: boolean
     notes?: boolean
     dueDate?: boolean
+    status?: boolean
     clientId?: boolean
     projectId?: boolean
     userId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
     client?: boolean | Reminder$clientArgs<ExtArgs>
     project?: boolean | Reminder$projectArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
@@ -3900,12 +3930,15 @@ export namespace Prisma {
     title?: boolean
     notes?: boolean
     dueDate?: boolean
+    status?: boolean
     clientId?: boolean
     projectId?: boolean
     userId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
   }
 
-  export type ReminderOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "notes" | "dueDate" | "clientId" | "projectId" | "userId", ExtArgs["result"]["reminder"]>
+  export type ReminderOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "notes" | "dueDate" | "status" | "clientId" | "projectId" | "userId" | "createdAt" | "updatedAt", ExtArgs["result"]["reminder"]>
   export type ReminderInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     client?: boolean | Reminder$clientArgs<ExtArgs>
     project?: boolean | Reminder$projectArgs<ExtArgs>
@@ -3934,9 +3967,12 @@ export namespace Prisma {
       title: string
       notes: string | null
       dueDate: Date
+      status: string
       clientId: string | null
       projectId: string | null
       userId: string
+      createdAt: Date
+      updatedAt: Date
     }, ExtArgs["result"]["reminder"]>
     composites: {}
   }
@@ -4367,9 +4403,12 @@ export namespace Prisma {
     readonly title: FieldRef<"Reminder", 'String'>
     readonly notes: FieldRef<"Reminder", 'String'>
     readonly dueDate: FieldRef<"Reminder", 'DateTime'>
+    readonly status: FieldRef<"Reminder", 'String'>
     readonly clientId: FieldRef<"Reminder", 'String'>
     readonly projectId: FieldRef<"Reminder", 'String'>
     readonly userId: FieldRef<"Reminder", 'String'>
+    readonly createdAt: FieldRef<"Reminder", 'DateTime'>
+    readonly updatedAt: FieldRef<"Reminder", 'DateTime'>
   }
     
 
@@ -7272,9 +7311,12 @@ export namespace Prisma {
     title: 'title',
     notes: 'notes',
     dueDate: 'dueDate',
+    status: 'status',
     clientId: 'clientId',
     projectId: 'projectId',
-    userId: 'userId'
+    userId: 'userId',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
   };
 
   export type ReminderScalarFieldEnum = (typeof ReminderScalarFieldEnum)[keyof typeof ReminderScalarFieldEnum]
@@ -7546,9 +7588,12 @@ export namespace Prisma {
     title?: StringFilter<"Reminder"> | string
     notes?: StringNullableFilter<"Reminder"> | string | null
     dueDate?: DateTimeFilter<"Reminder"> | Date | string
+    status?: StringFilter<"Reminder"> | string
     clientId?: StringNullableFilter<"Reminder"> | string | null
     projectId?: StringNullableFilter<"Reminder"> | string | null
     userId?: StringFilter<"Reminder"> | string
+    createdAt?: DateTimeFilter<"Reminder"> | Date | string
+    updatedAt?: DateTimeFilter<"Reminder"> | Date | string
     client?: XOR<ClientNullableScalarRelationFilter, ClientWhereInput> | null
     project?: XOR<ProjectNullableScalarRelationFilter, ProjectWhereInput> | null
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
@@ -7559,9 +7604,12 @@ export namespace Prisma {
     title?: SortOrder
     notes?: SortOrderInput | SortOrder
     dueDate?: SortOrder
+    status?: SortOrder
     clientId?: SortOrderInput | SortOrder
     projectId?: SortOrderInput | SortOrder
     userId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
     client?: ClientOrderByWithRelationInput
     project?: ProjectOrderByWithRelationInput
     user?: UserOrderByWithRelationInput
@@ -7575,9 +7623,12 @@ export namespace Prisma {
     title?: StringFilter<"Reminder"> | string
     notes?: StringNullableFilter<"Reminder"> | string | null
     dueDate?: DateTimeFilter<"Reminder"> | Date | string
+    status?: StringFilter<"Reminder"> | string
     clientId?: StringNullableFilter<"Reminder"> | string | null
     projectId?: StringNullableFilter<"Reminder"> | string | null
     userId?: StringFilter<"Reminder"> | string
+    createdAt?: DateTimeFilter<"Reminder"> | Date | string
+    updatedAt?: DateTimeFilter<"Reminder"> | Date | string
     client?: XOR<ClientNullableScalarRelationFilter, ClientWhereInput> | null
     project?: XOR<ProjectNullableScalarRelationFilter, ProjectWhereInput> | null
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
@@ -7588,9 +7639,12 @@ export namespace Prisma {
     title?: SortOrder
     notes?: SortOrderInput | SortOrder
     dueDate?: SortOrder
+    status?: SortOrder
     clientId?: SortOrderInput | SortOrder
     projectId?: SortOrderInput | SortOrder
     userId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
     _count?: ReminderCountOrderByAggregateInput
     _max?: ReminderMaxOrderByAggregateInput
     _min?: ReminderMinOrderByAggregateInput
@@ -7604,9 +7658,12 @@ export namespace Prisma {
     title?: StringWithAggregatesFilter<"Reminder"> | string
     notes?: StringNullableWithAggregatesFilter<"Reminder"> | string | null
     dueDate?: DateTimeWithAggregatesFilter<"Reminder"> | Date | string
+    status?: StringWithAggregatesFilter<"Reminder"> | string
     clientId?: StringNullableWithAggregatesFilter<"Reminder"> | string | null
     projectId?: StringNullableWithAggregatesFilter<"Reminder"> | string | null
     userId?: StringWithAggregatesFilter<"Reminder"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"Reminder"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"Reminder"> | Date | string
   }
 
   export type ClientWhereInput = {
@@ -7930,6 +7987,9 @@ export namespace Prisma {
     title: string
     notes?: string | null
     dueDate: Date | string
+    status?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
     client?: ClientCreateNestedOneWithoutRemindersInput
     project?: ProjectCreateNestedOneWithoutRemindersInput
     user: UserCreateNestedOneWithoutRemindersInput
@@ -7940,9 +8000,12 @@ export namespace Prisma {
     title: string
     notes?: string | null
     dueDate: Date | string
+    status?: string
     clientId?: string | null
     projectId?: string | null
     userId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type ReminderUpdateInput = {
@@ -7950,6 +8013,9 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     client?: ClientUpdateOneWithoutRemindersNestedInput
     project?: ProjectUpdateOneWithoutRemindersNestedInput
     user?: UserUpdateOneRequiredWithoutRemindersNestedInput
@@ -7960,9 +8026,12 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: StringFieldUpdateOperationsInput | string
     clientId?: NullableStringFieldUpdateOperationsInput | string | null
     projectId?: NullableStringFieldUpdateOperationsInput | string | null
     userId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type ReminderCreateManyInput = {
@@ -7970,9 +8039,12 @@ export namespace Prisma {
     title: string
     notes?: string | null
     dueDate: Date | string
+    status?: string
     clientId?: string | null
     projectId?: string | null
     userId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type ReminderUpdateManyMutationInput = {
@@ -7980,6 +8052,9 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type ReminderUncheckedUpdateManyInput = {
@@ -7987,9 +8062,12 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: StringFieldUpdateOperationsInput | string
     clientId?: NullableStringFieldUpdateOperationsInput | string | null
     projectId?: NullableStringFieldUpdateOperationsInput | string | null
     userId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type ClientCreateInput = {
@@ -8390,9 +8468,12 @@ export namespace Prisma {
     title?: SortOrder
     notes?: SortOrder
     dueDate?: SortOrder
+    status?: SortOrder
     clientId?: SortOrder
     projectId?: SortOrder
     userId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
   }
 
   export type ReminderMaxOrderByAggregateInput = {
@@ -8400,9 +8481,12 @@ export namespace Prisma {
     title?: SortOrder
     notes?: SortOrder
     dueDate?: SortOrder
+    status?: SortOrder
     clientId?: SortOrder
     projectId?: SortOrder
     userId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
   }
 
   export type ReminderMinOrderByAggregateInput = {
@@ -8410,9 +8494,12 @@ export namespace Prisma {
     title?: SortOrder
     notes?: SortOrder
     dueDate?: SortOrder
+    status?: SortOrder
     clientId?: SortOrder
     projectId?: SortOrder
     userId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
   }
 
   export type ClientCountOrderByAggregateInput = {
@@ -9302,6 +9389,9 @@ export namespace Prisma {
     title: string
     notes?: string | null
     dueDate: Date | string
+    status?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
     client?: ClientCreateNestedOneWithoutRemindersInput
     project?: ProjectCreateNestedOneWithoutRemindersInput
   }
@@ -9311,8 +9401,11 @@ export namespace Prisma {
     title: string
     notes?: string | null
     dueDate: Date | string
+    status?: string
     clientId?: string | null
     projectId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type ReminderCreateOrConnectWithoutUserInput = {
@@ -9440,9 +9533,12 @@ export namespace Prisma {
     title?: StringFilter<"Reminder"> | string
     notes?: StringNullableFilter<"Reminder"> | string | null
     dueDate?: DateTimeFilter<"Reminder"> | Date | string
+    status?: StringFilter<"Reminder"> | string
     clientId?: StringNullableFilter<"Reminder"> | string | null
     projectId?: StringNullableFilter<"Reminder"> | string | null
     userId?: StringFilter<"Reminder"> | string
+    createdAt?: DateTimeFilter<"Reminder"> | Date | string
+    updatedAt?: DateTimeFilter<"Reminder"> | Date | string
   }
 
   export type ClientCreateWithoutLogsInput = {
@@ -9922,6 +10018,9 @@ export namespace Prisma {
     title: string
     notes?: string | null
     dueDate: Date | string
+    status?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
     project?: ProjectCreateNestedOneWithoutRemindersInput
     user: UserCreateNestedOneWithoutRemindersInput
   }
@@ -9931,8 +10030,11 @@ export namespace Prisma {
     title: string
     notes?: string | null
     dueDate: Date | string
+    status?: string
     projectId?: string | null
     userId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type ReminderCreateOrConnectWithoutClientInput = {
@@ -10152,6 +10254,9 @@ export namespace Prisma {
     title: string
     notes?: string | null
     dueDate: Date | string
+    status?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
     client?: ClientCreateNestedOneWithoutRemindersInput
     user: UserCreateNestedOneWithoutRemindersInput
   }
@@ -10161,8 +10266,11 @@ export namespace Prisma {
     title: string
     notes?: string | null
     dueDate: Date | string
+    status?: string
     clientId?: string | null
     userId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type ReminderCreateOrConnectWithoutProjectInput = {
@@ -10317,8 +10425,11 @@ export namespace Prisma {
     title: string
     notes?: string | null
     dueDate: Date | string
+    status?: string
     clientId?: string | null
     projectId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type ClientUpdateWithoutUserInput = {
@@ -10429,6 +10540,9 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     client?: ClientUpdateOneWithoutRemindersNestedInput
     project?: ProjectUpdateOneWithoutRemindersNestedInput
   }
@@ -10438,8 +10552,11 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: StringFieldUpdateOperationsInput | string
     clientId?: NullableStringFieldUpdateOperationsInput | string | null
     projectId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type ReminderUncheckedUpdateManyWithoutUserInput = {
@@ -10447,8 +10564,11 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: StringFieldUpdateOperationsInput | string
     clientId?: NullableStringFieldUpdateOperationsInput | string | null
     projectId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type ProjectCreateManyClientInput = {
@@ -10476,8 +10596,11 @@ export namespace Prisma {
     title: string
     notes?: string | null
     dueDate: Date | string
+    status?: string
     projectId?: string | null
     userId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type ProjectUpdateWithoutClientInput = {
@@ -10549,6 +10672,9 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     project?: ProjectUpdateOneWithoutRemindersNestedInput
     user?: UserUpdateOneRequiredWithoutRemindersNestedInput
   }
@@ -10558,8 +10684,11 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: StringFieldUpdateOperationsInput | string
     projectId?: NullableStringFieldUpdateOperationsInput | string | null
     userId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type ReminderUncheckedUpdateManyWithoutClientInput = {
@@ -10567,8 +10696,11 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: StringFieldUpdateOperationsInput | string
     projectId?: NullableStringFieldUpdateOperationsInput | string | null
     userId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type InteractionLogCreateManyProjectInput = {
@@ -10585,8 +10717,11 @@ export namespace Prisma {
     title: string
     notes?: string | null
     dueDate: Date | string
+    status?: string
     clientId?: string | null
     userId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type InteractionLogUpdateWithoutProjectInput = {
@@ -10621,6 +10756,9 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     client?: ClientUpdateOneWithoutRemindersNestedInput
     user?: UserUpdateOneRequiredWithoutRemindersNestedInput
   }
@@ -10630,8 +10768,11 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: StringFieldUpdateOperationsInput | string
     clientId?: NullableStringFieldUpdateOperationsInput | string | null
     userId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type ReminderUncheckedUpdateManyWithoutProjectInput = {
@@ -10639,8 +10780,11 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: StringFieldUpdateOperationsInput | string
     clientId?: NullableStringFieldUpdateOperationsInput | string | null
     userId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
 
