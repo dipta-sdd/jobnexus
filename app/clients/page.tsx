@@ -131,29 +131,7 @@ export default function ClientsPage() {
           </div>
         </div>
 
-        {/* Filters */}
-        <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
-          <div className="px-4 sm:px-6 lg:px-8 py-4">
-            <div className="flex items-center space-x-4 overflow-x-auto pb-2">
-              <button className="px-3 py-2 text-sm rounded-md whitespace-nowrap bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-100">
-                All Clients
-              </button>
-              <button className="px-3 py-2 text-sm rounded-md whitespace-nowrap text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700">
-                Active
-              </button>
-              <button className="px-3 py-2 text-sm rounded-md whitespace-nowrap text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700">
-                Leads
-              </button>
-              <button className="px-3 py-2 text-sm rounded-md whitespace-nowrap text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700">
-                Inactive
-              </button>
-              <button className="px-3 py-2 text-sm rounded-md text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center whitespace-nowrap">
-                <Filter className="h-4 w-4 mr-2" />
-                More Filters
-              </button>
-            </div>
-          </div>
-        </div>
+
 
         {/* Clients List */}
         <main className="flex-1 overflow-auto p-0 mt-4">
