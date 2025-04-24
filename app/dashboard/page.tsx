@@ -1,5 +1,5 @@
 import { getCurrentUser } from '@/lib/auth';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '@/lib/generated/prisma';
 import { redirect } from 'next/navigation';
 
 const prisma = new PrismaClient();

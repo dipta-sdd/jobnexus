@@ -1,13 +1,14 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import jwt from 'jsonwebtoken';
+import { jwtVerify } from 'jose';
 
 // Paths that don't require authentication
 const publicPaths = ['/'];
 
 const unAuthPaths = ['/login', '/signup']
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   if (publicPaths.includes(pathname)) {
@@ -34,16 +35,11 @@ export function middleware(request: NextRequest) {
   }
 
   try {
-    // Verify token
-    const decoded = jwt.verify(
-      token,
-      process.env.JWT_SECRET || 'your-secret-key'
-    ) as { userId: string };
-
-    // Add userId to request headers
+    const secret = new TextEncoder().encode(process.env.JWT_SECRET || 'your-secret-key');
+    const { payload } = await jwtVerify(token, secret);
+    
     const requestHeaders = new Headers(request.headers);
-    requestHeaders.set('x-user-id', decoded.userId);
-
+    requestHeaders.set('x-user-id', payload.userId);
     return NextResponse.next({
       request: {
         headers: requestHeaders,

@@ -1,7 +1,7 @@
 import { compare, hash } from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { cookies, headers } from 'next/headers';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '@/lib/generated/prisma';
 
 const prisma = new PrismaClient();
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
@@ -15,14 +15,16 @@ export async function comparePasswords(password: string, hashedPassword: string)
   return compare(password, hashedPassword);
 }
 
-export async function createToken(userId: string) {
-  return jwt.sign({ userId }, JWT_SECRET, { expiresIn: '7d' });
+export function generateToken(userId: string): string {
+  return jwt.sign({ userId }, JWT_SECRET, { expiresIn: '24h' });
 }
 
-export async function verifyToken(token: string) {
+export async function verifyToken(token: string): Promise<{ userId: string } | null> {
   try {
-    return jwt.verify(token, JWT_SECRET) as { userId: string };
+    const decoded = jwt.verify(token, JWT_SECRET) as { userId: string };
+    return decoded;
   } catch (error) {
+    console.error('Token verification failed:', error);
     return null;
   }
 }
