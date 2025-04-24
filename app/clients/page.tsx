@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Filter, Plus, Search } from "lucide-react";
 import ClientRow from "@/components/clients/client-row";
 import ClientCard from "@/components/clients/client-card";
+import { useRouter } from "next/navigation";
 
 interface Client {
   id: string;
@@ -20,115 +21,31 @@ interface Client {
 }
 
 export default function ClientsPage() {
+  const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
   const [view, setView] = useState("grid"); // grid or list
+  const [clients, setClients] = useState<Client[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const clients: Client[] = [
-    {
-      id: "CLT-001",
-      name: "Acme Inc",
-      email: "john@acmeinc.com",
-      phone: "+1 (555) 123-4567",
-      company: "Acme Corporation",
-      notes: "Long-term client with multiple ongoing projects. Looking to expand their digital presence.",
-      projects: [{ id: "1" }, { id: "2" }, { id: "3" }],
-      userId: "user1",
-      user: { id: "user1" },
-      createdAt: new Date(),
-      updatedAt: new Date()
-    },
-    {
-      id: "CLT-002",
-      name: "TechCorp",
-      email: "sarah@techcorp.com",
-      phone: "+1 (555) 987-6543",
-      company: "TechCorp Solutions",
-      notes: "New client with a large mobile app development project. Potential for ongoing maintenance contract.",
-      projects: [{ id: "4" }],
-      userId: "user1",
-      user: { id: "user1" },
-      createdAt: new Date(),
-      updatedAt: new Date()
-    },
-    {
-      id: "CLT-003",
-      name: "StartUp Co",
-      email: "michael@startupco.com",
-      phone: "+1 (555) 456-7890",
-      company: "StartUp Co",
-      notes: "Startup with limited budget but high growth potential. Currently working on branding and website.",
-      projects: [{ id: "5" }, { id: "6" }],
-      userId: "user1",
-      user: { id: "user1" },
-      createdAt: new Date(),
-      updatedAt: new Date()
-    },
-    {
-      id: "CLT-004",
-      name: "Local Business",
-      email: "emily@localbusiness.com",
-      phone: "+1 (555) 234-5678",
-      company: "Local Business Inc",
-      notes: "Small local business that needed SEO help. Project completed but may need additional services in the future.",
-      projects: [{ id: "7" }],
-      userId: "user1",
-      user: { id: "user1" },
-      createdAt: new Date(),
-      updatedAt: new Date()
-    },
-    {
-      id: "CLT-005",
-      name: "Marketing Agency",
-      email: "david@marketingagency.com",
-      phone: "+1 (555) 876-5432",
-      company: "Marketing Agency LLC",
-      notes: "Agency partnership for content strategy project. Currently on hold due to budget constraints.",
-      projects: [{ id: "8" }],
-      userId: "user1",
-      user: { id: "user1" },
-      createdAt: new Date(),
-      updatedAt: new Date()
-    },
-    {
-      id: "CLT-006",
-      name: "Fashion Brand",
-      email: "jessica@fashionbrand.com",
-      phone: "+1 (555) 345-6789",
-      company: "Fashion Brand Co",
-      notes: "Fashion brand looking to improve social media presence. Current project is a social media campaign.",
-      projects: [{ id: "9" }],
-      userId: "user1",
-      user: { id: "user1" },
-      createdAt: new Date(),
-      updatedAt: new Date()
-    },
-    {
-      id: "CLT-007",
-      name: "Retail Solutions",
-      email: "robert@retailsolutions.com",
-      phone: "+1 (555) 654-3210",
-      company: "Retail Solutions Inc",
-      notes: "Large e-commerce platform project in planning phase. High-value client with potential for long-term relationship.",
-      projects: [{ id: "10" }],
-      userId: "user1",
-      user: { id: "user1" },
-      createdAt: new Date(),
-      updatedAt: new Date()
-    },
-    {
-      id: "CLT-008",
-      name: "Healthcare Provider",
-      email: "amanda@healthcare.com",
-      phone: "+1 (555) 789-0123",
-      company: "Healthcare Provider LLC",
-      notes: "Potential client interested in website redesign and patient portal. Initial consultation completed.",
-      projects: [],
-      userId: "user1",
-      user: { id: "user1" },
-      createdAt: new Date(),
-      updatedAt: new Date()
-    }
-  ];
+  useEffect(() => {
+    const fetchClients = async () => {
+      try {
+        const response = await fetch("/api/clients");
+        if (!response.ok) {
+          throw new Error("Failed to fetch clients");
+        }
+        const data = await response.json();
+        setClients(data);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "An error occurred");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchClients();
+  }, []);
 
   // Filter clients based on search query
   const filteredClients = clients.filter((client) => {
@@ -140,6 +57,39 @@ export default function ClientsPage() {
       client.id.toLowerCase().includes(searchQuery.toLowerCase())
     );
   });
+
+  if (isLoading) {
+    return (
+      <div className="flex min-h-screen bg-gray-50 dark:bg-gray-900 items-center justify-center">
+        <div className="text-center">
+          <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-emerald-500 border-t-transparent"></div>
+          <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">Loading clients...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex min-h-screen bg-gray-50 dark:bg-gray-900 items-center justify-center">
+        <div className="text-center">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-100 dark:bg-red-900/30 mb-4">
+            <svg className="h-8 w-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+          </div>
+          <h3 className="text-lg font-medium text-gray-900 dark:text-white">Error loading clients</h3>
+          <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">{error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-emerald-700 bg-emerald-100 hover:bg-emerald-200 dark:text-emerald-100 dark:bg-emerald-900/30 dark:hover:bg-emerald-900/50"
+          >
+            Try again
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -211,7 +161,10 @@ export default function ClientsPage() {
                       />
                     </svg>
                   </button>
-                  <button className="inline-flex flex-1 md:flex-none items-center flex-nowrap px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500">
+                  <button
+                    onClick={() => router.push("/clients/add")}
+                    className="inline-flex flex-1 md:flex-none items-center flex-nowrap px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500"
+                  >
                     <Plus className="h-5 w-5 mr-2" />
                     Add Client
                   </button>
