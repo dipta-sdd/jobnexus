@@ -55,14 +55,14 @@ export default function ClientRow({ client }: ClientRowProps) {
           {client.email}
         </div>
       </td>
-      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+      <td className="px-6 py-4 whitespace-wrap min-w-md text-sm text-gray-500 dark:text-gray-400">
         {client.notes}
       </td>
       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
         {projectCount} {projectCount === 1 ? "project" : "projects"}
       </td>
       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-        {client.updatedAt.toLocaleDateString()}
+        {new Date(client.updatedAt).toLocaleDateString()}
       </td>
       <td className="px-6 py-4 whitespace-nowrap">
         <span

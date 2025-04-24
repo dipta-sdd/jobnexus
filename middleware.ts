@@ -10,7 +10,6 @@ const unAuthPaths = ['/login', '/signup']
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-
   if (publicPaths.includes(pathname)) {
     return NextResponse.next();
   }
@@ -37,7 +36,6 @@ export async function middleware(request: NextRequest) {
   try {
     const secret = new TextEncoder().encode(process.env.JWT_SECRET || 'your-secret-key');
     const { payload } = await jwtVerify(token, secret);
-    
     const requestHeaders = new Headers(request.headers);
     requestHeaders.set('x-user-id', payload.userId);
     return NextResponse.next({
