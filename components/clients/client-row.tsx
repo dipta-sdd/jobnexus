@@ -5,17 +5,15 @@ import { MoreHorizontal } from "lucide-react";
 interface Client {
   id: string;
   name: string;
-  industry: string;
-  contact: string;
   email: string;
   phone: string;
-  location: string;
-  projects: number;
-  totalValue: string;
-  status: string;
-  image: string;
-  lastContact: string;
-  notes: string;
+  company?: string | null;
+  notes?: string | null;
+  projects: Array<{ id: string }>;
+  userId: string;
+  user: { id: string };
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 interface ClientRowProps {
@@ -24,7 +22,7 @@ interface ClientRowProps {
 
 export default function ClientRow({ client }: ClientRowProps) {
   // Calculate derived values
-  const projectCount = client.projects;
+  const projectCount = client.projects.length;
   
   return (
     <tr  className="hover:bg-gray-50 dark:hover:bg-gray-700/30">
@@ -44,7 +42,7 @@ export default function ClientRow({ client }: ClientRowProps) {
               {client.name}
             </div>
             <div className="text-sm text-gray-500 dark:text-gray-400">
-              {client.industry}
+              {client.company}
             </div>
           </div>
         </div>
@@ -64,7 +62,7 @@ export default function ClientRow({ client }: ClientRowProps) {
         {projectCount} {projectCount === 1 ? "project" : "projects"}
       </td>
       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-        {client.lastContact}
+        {client.updatedAt.toLocaleDateString()}
       </td>
       <td className="px-6 py-4 whitespace-nowrap">
         <span

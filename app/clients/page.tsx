@@ -5,139 +5,129 @@ import { Filter, Plus, Search } from "lucide-react";
 import ClientRow from "@/components/clients/client-row";
 import ClientCard from "@/components/clients/client-card";
 
+interface Client {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  company?: string | null;
+  notes?: string | null;
+  projects: Array<{ id: string }>;
+  userId: string;
+  user: { id: string };
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 export default function ClientsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [view, setView] = useState("grid"); // grid or list
 
-  const clients = [
+  const clients: Client[] = [
     {
       id: "CLT-001",
       name: "Acme Inc",
-      industry: "Technology",
-      contact: "John Smith",
       email: "john@acmeinc.com",
       phone: "+1 (555) 123-4567",
-      location: "New York, NY",
-      projects: 3,
-      totalValue: "$15,500",
-      status: "Active",
-      image: "/placeholder.svg?height=80&width=80&text=A",
-      lastContact: "2 days ago",
-      notes:
-        "Long-term client with multiple ongoing projects. Looking to expand their digital presence.",
+      company: "Acme Corporation",
+      notes: "Long-term client with multiple ongoing projects. Looking to expand their digital presence.",
+      projects: [{ id: "1" }, { id: "2" }, { id: "3" }],
+      userId: "user1",
+      user: { id: "user1" },
+      createdAt: new Date(),
+      updatedAt: new Date()
     },
     {
       id: "CLT-002",
       name: "TechCorp",
-      industry: "Software",
-      contact: "Sarah Johnson",
       email: "sarah@techcorp.com",
       phone: "+1 (555) 987-6543",
-      location: "San Francisco, CA",
-      projects: 1,
-      totalValue: "$12,000",
-      status: "Active",
-      image: "/placeholder.svg?height=80&width=80&text=T",
-      lastContact: "Yesterday",
-      notes:
-        "New client with a large mobile app development project. Potential for ongoing maintenance contract.",
+      company: "TechCorp Solutions",
+      notes: "New client with a large mobile app development project. Potential for ongoing maintenance contract.",
+      projects: [{ id: "4" }],
+      userId: "user1",
+      user: { id: "user1" },
+      createdAt: new Date(),
+      updatedAt: new Date()
     },
     {
       id: "CLT-003",
       name: "StartUp Co",
-      industry: "E-commerce",
-      contact: "Michael Chen",
       email: "michael@startupco.com",
       phone: "+1 (555) 456-7890",
-      location: "Austin, TX",
-      projects: 2,
-      totalValue: "$7,800",
-      status: "Active",
-      image: "/placeholder.svg?height=80&width=80&text=S",
-      lastContact: "1 week ago",
-      notes:
-        "Startup with limited budget but high growth potential. Currently working on branding and website.",
+      company: "StartUp Co",
+      notes: "Startup with limited budget but high growth potential. Currently working on branding and website.",
+      projects: [{ id: "5" }, { id: "6" }],
+      userId: "user1",
+      user: { id: "user1" },
+      createdAt: new Date(),
+      updatedAt: new Date()
     },
     {
       id: "CLT-004",
       name: "Local Business",
-      industry: "Retail",
-      contact: "Emily Davis",
       email: "emily@localbusiness.com",
       phone: "+1 (555) 234-5678",
-      location: "Chicago, IL",
-      projects: 1,
-      totalValue: "$2,800",
-      status: "Completed",
-      image: "/placeholder.svg?height=80&width=80&text=L",
-      lastContact: "3 weeks ago",
-      notes:
-        "Small local business that needed SEO help. Project completed but may need additional services in the future.",
+      company: "Local Business Inc",
+      notes: "Small local business that needed SEO help. Project completed but may need additional services in the future.",
+      projects: [{ id: "7" }],
+      userId: "user1",
+      user: { id: "user1" },
+      createdAt: new Date(),
+      updatedAt: new Date()
     },
     {
       id: "CLT-005",
       name: "Marketing Agency",
-      industry: "Marketing",
-      contact: "David Wilson",
       email: "david@marketingagency.com",
       phone: "+1 (555) 876-5432",
-      location: "Los Angeles, CA",
-      projects: 1,
-      totalValue: "$4,500",
-      status: "On Hold",
-      image: "/placeholder.svg?height=80&width=80&text=M",
-      lastContact: "1 month ago",
-      notes:
-        "Agency partnership for content strategy project. Currently on hold due to budget constraints.",
+      company: "Marketing Agency LLC",
+      notes: "Agency partnership for content strategy project. Currently on hold due to budget constraints.",
+      projects: [{ id: "8" }],
+      userId: "user1",
+      user: { id: "user1" },
+      createdAt: new Date(),
+      updatedAt: new Date()
     },
     {
       id: "CLT-006",
       name: "Fashion Brand",
-      industry: "Fashion",
-      contact: "Jessica Lee",
       email: "jessica@fashionbrand.com",
       phone: "+1 (555) 345-6789",
-      location: "Miami, FL",
-      projects: 1,
-      totalValue: "$3,200",
-      status: "Active",
-      image: "/placeholder.svg?height=80&width=80&text=F",
-      lastContact: "5 days ago",
-      notes:
-        "Fashion brand looking to improve social media presence. Current project is a social media campaign.",
+      company: "Fashion Brand Co",
+      notes: "Fashion brand looking to improve social media presence. Current project is a social media campaign.",
+      projects: [{ id: "9" }],
+      userId: "user1",
+      user: { id: "user1" },
+      createdAt: new Date(),
+      updatedAt: new Date()
     },
     {
       id: "CLT-007",
       name: "Retail Solutions",
-      industry: "Retail Technology",
-      contact: "Robert Brown",
       email: "robert@retailsolutions.com",
       phone: "+1 (555) 654-3210",
-      location: "Seattle, WA",
-      projects: 1,
-      totalValue: "$15,000",
-      status: "Planning",
-      image: "/placeholder.svg?height=80&width=80&text=R",
-      lastContact: "3 days ago",
-      notes:
-        "Large e-commerce platform project in planning phase. High-value client with potential for long-term relationship.",
+      company: "Retail Solutions Inc",
+      notes: "Large e-commerce platform project in planning phase. High-value client with potential for long-term relationship.",
+      projects: [{ id: "10" }],
+      userId: "user1",
+      user: { id: "user1" },
+      createdAt: new Date(),
+      updatedAt: new Date()
     },
     {
       id: "CLT-008",
       name: "Healthcare Provider",
-      industry: "Healthcare",
-      contact: "Amanda Martinez",
       email: "amanda@healthcare.com",
       phone: "+1 (555) 789-0123",
-      location: "Boston, MA",
-      projects: 0,
-      totalValue: "$0",
-      status: "Lead",
-      image: "/placeholder.svg?height=80&width=80&text=H",
-      lastContact: "1 week ago",
-      notes:
-        "Potential client interested in website redesign and patient portal. Initial consultation completed.",
-    },
+      company: "Healthcare Provider LLC",
+      notes: "Potential client interested in website redesign and patient portal. Initial consultation completed.",
+      projects: [],
+      userId: "user1",
+      user: { id: "user1" },
+      createdAt: new Date(),
+      updatedAt: new Date()
+    }
   ];
 
   // Filter clients based on search query
@@ -145,8 +135,8 @@ export default function ClientsPage() {
     if (!searchQuery) return true;
     return (
       client.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      client.contact.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      client.industry.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      client.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (client.company?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false) ||
       client.id.toLowerCase().includes(searchQuery.toLowerCase())
     );
   });
@@ -163,7 +153,7 @@ export default function ClientsPage() {
               </h1>
 
               <div className="mt-4 md:mt-0 flex flex-wrap gap-2 items-center">
-                <div className="relative  flex-1 min-w-[200px]">
+                <div className="relative flex-1 min-w-[200px]">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <Search className="h-5 w-5 text-gray-400" />
                   </div>
@@ -221,7 +211,7 @@ export default function ClientsPage() {
                       />
                     </svg>
                   </button>
-                  <button className="inline-flex flex-1 md:flex-none items-center flex-nowrap px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 ">
+                  <button className="inline-flex flex-1 md:flex-none items-center flex-nowrap px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500">
                     <Plus className="h-5 w-5 mr-2" />
                     Add Client
                   </button>
@@ -264,8 +254,8 @@ export default function ClientsPage() {
               ))}
             </div>
           ) : (
-            <div className="bg-white dark:bg-gray-800  shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
-              <table className=" divide-y divide-gray-200 dark:divide-gray-700">
+            <div className="bg-white dark:bg-gray-800 shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+              <table className="divide-y divide-gray-200 dark:divide-gray-700">
                 <thead className="bg-gray-50 dark:bg-gray-700/50">
                   <tr>
                     <th
@@ -278,13 +268,13 @@ export default function ClientsPage() {
                       scope="col"
                       className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
                     >
-                      Contact
+                      Contact Info
                     </th>
                     <th
                       scope="col"
                       className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
                     >
-                      Location
+                      Notes
                     </th>
                     <th
                       scope="col"
@@ -296,7 +286,7 @@ export default function ClientsPage() {
                       scope="col"
                       className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
                     >
-                      Value
+                      Last Updated
                     </th>
                     <th
                       scope="col"
@@ -330,7 +320,7 @@ export default function ClientsPage() {
                 No clients found
               </h3>
               <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-                Try adjusting your search or filter to find what you're looking
+                Try adjusting your search or filter to find what you&apos;re looking
                 for.
               </p>
               <button
