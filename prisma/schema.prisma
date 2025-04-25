@@ -22,8 +22,8 @@ model User {
   name     String?
   clients  Client[]
   projects Project[]
-  logs     InteractionLog[]  // Add this line
-  reminders Reminder[]       // Add this line
+  logs     InteractionLog[]
+  reminders Reminder[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -33,12 +33,14 @@ model InteractionLog {
   type      String   // "call", "meeting", "email"
   notes     String
   date      DateTime @default(now())
-  clientId  String?
-  client    Client?  @relation(fields: [clientId], references: [id])
+  clientId  String
+  client    Client   @relation(fields: [clientId], references: [id])
   projectId String?
   project   Project? @relation(fields: [projectId], references: [id])
   userId    String
   user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Reminder {
@@ -47,8 +49,8 @@ model Reminder {
   notes     String?
   dueDate   DateTime
   status    String   @default("Pending")
-  clientId  String?
-  client    Client?  @relation(fields: [clientId], references: [id])
+  clientId  String
+  client    Client   @relation(fields: [clientId], references: [id])
   projectId String?
   project   Project? @relation(fields: [projectId], references: [id])
   userId    String
@@ -76,7 +78,9 @@ model Client {
 model Project {
   id        String   @id @default(uuid())
   title     String
+  description String?
   budget    Float
+  startDate DateTime @default(now())
   deadline  DateTime
   status    String
   clientId  String

@@ -82,9 +82,10 @@ export async function DELETE(
 ) {
   return withAuth(request, async (user) => {
     try {
+      const {id } = await params;
       await prisma.reminder.delete({
         where: {
-          id: params.id,
+          id: id,
           userId: user.id,
         },
       });

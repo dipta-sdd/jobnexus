@@ -11,6 +11,28 @@ export default function Navbar() {
   const [mounted, setMounted] = useState(false)
   const { theme, setTheme } = useTheme()
   const { user, isLoading, logout } = useUser()
+  const navOptions = [
+    {
+      label: "Dashboard",
+      href: "/dashboard"
+    },
+    {
+      label: "Projects",
+      href: "/projects"
+    },
+    {
+      label: "Clients",
+      href: "/clients"
+    },
+    {
+      label: "Interaction Logs",
+      href: "/interaction-logs"
+    },
+    {
+      label: "Reminders",
+      href: "/reminders"
+    }
+  ]
 
   useEffect(() => {
     setMounted(true)
@@ -50,28 +72,18 @@ export default function Navbar() {
             </Link>
             {user && (
               <>
-                <Link
-                  href="/projects"
-                  className="text-gray-700 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white transition-colors"
-                >
-                  Projects
-                </Link>
-                <Link
-                  href="/clients"
-                  className="text-gray-700 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white transition-colors"
-                >
-                  Clients
-                </Link>
-                <Link
-                  href="/dashboard"
-                  className="text-gray-700 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white transition-colors"
-                >
-                  Dashboard
-                </Link>
+                {navOptions.map((option) => (
+                  <Link
+                    key={option.href}
+                    href={option.href}
+                    className="text-gray-700 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white transition-colors"
+                  >
+                    {option.label}
+                  </Link>
+                ))}
               </>
             )}
           </div>
-
           {/* Right side actions */}
           <div className="flex items-center space-x-4">
             {/* Theme toggle */}
@@ -132,27 +144,16 @@ export default function Navbar() {
               </Link>
               {user && (
                 <>
-                  <Link
-                    href="/projects"
-                    className="px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md"
-                    onClick={() => setIsMenuOpen(false)}
+                  {navOptions.map((option) => (
+                    <Link
+                      key={option.href}
+                      href={option.href}
+                      className="px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md"
+                      onClick={() => setIsMenuOpen(false)}
                   >
-                    Projects
-                  </Link>
-                  <Link
-                    href="/clients"
-                    className="px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Clients
-                  </Link>
-                  <Link
-                    href="/dashboard"
-                    className="px-4 py-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Dashboard
-                  </Link>
+                    {option.label}
+                    </Link>
+                  ))}
                 </>
               )}
               <div className="border-t border-gray-200 dark:border-gray-700 pt-4 flex flex-col space-y-2">

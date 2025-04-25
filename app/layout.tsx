@@ -8,21 +8,6 @@ import { Toaster } from "react-hot-toast";
 import Navbar from "@/components/Navbar";
 import { UserProvider } from '@/context/UserContext';
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
-// export const metadata: Metadata = {
-//   title: "JobNexus - Freelancer CRM",
-//   description: "A Mini-CRM platform for freelancers",
-// };
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -31,13 +16,13 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen bg-gray-50 dark:bg-gray-900`}
+        className=" antialiased min-h-screen bg-gray-50 dark:bg-gray-900"
       >
         <UserProvider>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             <div className="flex min-h-screen flex-col">
               <Navbar />
-              <main className="flex-1 container mx-auto px-4 py-8 bg-gray-50 dark:bg-gray-900">
+              <main className="flex-1 container mx-auto py-0 bg-gray-50 dark:bg-gray-900">
                 {children}
               </main>
             </div>

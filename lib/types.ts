@@ -12,9 +12,11 @@ export interface Client {
     phone: string;
     company?: string | null;
     notes?: string | null;
-    projects?: Array<{ id: string }> ;
+    projects?: Project[];
     userId: string;
-    user?: { id: string };
+    user?: User;
+    logs?: InteractionLog[];
+    reminders?: Reminder[];
     createdAt: Date;
     updatedAt: Date;
   }
@@ -23,14 +25,16 @@ export interface Project {
   id: string;
   title: string;
   budget: number;
+  description?: string;
+  startDate: Date;
   deadline: Date;
   status: string;
   clientId: string;
   client: Client;
   userId: string;
   user: User;
-  logs: InteractionLog[];
-  reminders: Reminder[];
+  logs?: InteractionLog[];
+  reminders?: Reminder[];
   createdAt: Date;
   updatedAt: Date;
 }
@@ -45,7 +49,7 @@ export interface InteractionLog {
   projectId?: string | null;
   project?: Project | null;
   userId: string;
-  user: User;
+  user?: User | null;
 }
 
 export interface Reminder {

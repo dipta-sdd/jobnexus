@@ -2564,6 +2564,8 @@ export namespace Prisma {
     clientId: string | null
     projectId: string | null
     userId: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
   }
 
   export type InteractionLogMaxAggregateOutputType = {
@@ -2574,6 +2576,8 @@ export namespace Prisma {
     clientId: string | null
     projectId: string | null
     userId: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
   }
 
   export type InteractionLogCountAggregateOutputType = {
@@ -2584,6 +2588,8 @@ export namespace Prisma {
     clientId: number
     projectId: number
     userId: number
+    createdAt: number
+    updatedAt: number
     _all: number
   }
 
@@ -2596,6 +2602,8 @@ export namespace Prisma {
     clientId?: true
     projectId?: true
     userId?: true
+    createdAt?: true
+    updatedAt?: true
   }
 
   export type InteractionLogMaxAggregateInputType = {
@@ -2606,6 +2614,8 @@ export namespace Prisma {
     clientId?: true
     projectId?: true
     userId?: true
+    createdAt?: true
+    updatedAt?: true
   }
 
   export type InteractionLogCountAggregateInputType = {
@@ -2616,6 +2626,8 @@ export namespace Prisma {
     clientId?: true
     projectId?: true
     userId?: true
+    createdAt?: true
+    updatedAt?: true
     _all?: true
   }
 
@@ -2696,9 +2708,11 @@ export namespace Prisma {
     type: string
     notes: string
     date: Date
-    clientId: string | null
+    clientId: string
     projectId: string | null
     userId: string
+    createdAt: Date
+    updatedAt: Date
     _count: InteractionLogCountAggregateOutputType | null
     _min: InteractionLogMinAggregateOutputType | null
     _max: InteractionLogMaxAggregateOutputType | null
@@ -2726,7 +2740,9 @@ export namespace Prisma {
     clientId?: boolean
     projectId?: boolean
     userId?: boolean
-    client?: boolean | InteractionLog$clientArgs<ExtArgs>
+    createdAt?: boolean
+    updatedAt?: boolean
+    client?: boolean | ClientDefaultArgs<ExtArgs>
     project?: boolean | InteractionLog$projectArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["interactionLog"]>
@@ -2739,7 +2755,9 @@ export namespace Prisma {
     clientId?: boolean
     projectId?: boolean
     userId?: boolean
-    client?: boolean | InteractionLog$clientArgs<ExtArgs>
+    createdAt?: boolean
+    updatedAt?: boolean
+    client?: boolean | ClientDefaultArgs<ExtArgs>
     project?: boolean | InteractionLog$projectArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["interactionLog"]>
@@ -2752,7 +2770,9 @@ export namespace Prisma {
     clientId?: boolean
     projectId?: boolean
     userId?: boolean
-    client?: boolean | InteractionLog$clientArgs<ExtArgs>
+    createdAt?: boolean
+    updatedAt?: boolean
+    client?: boolean | ClientDefaultArgs<ExtArgs>
     project?: boolean | InteractionLog$projectArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["interactionLog"]>
@@ -2765,21 +2785,23 @@ export namespace Prisma {
     clientId?: boolean
     projectId?: boolean
     userId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
   }
 
-  export type InteractionLogOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "type" | "notes" | "date" | "clientId" | "projectId" | "userId", ExtArgs["result"]["interactionLog"]>
+  export type InteractionLogOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "type" | "notes" | "date" | "clientId" | "projectId" | "userId" | "createdAt" | "updatedAt", ExtArgs["result"]["interactionLog"]>
   export type InteractionLogInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    client?: boolean | InteractionLog$clientArgs<ExtArgs>
+    client?: boolean | ClientDefaultArgs<ExtArgs>
     project?: boolean | InteractionLog$projectArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
   }
   export type InteractionLogIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    client?: boolean | InteractionLog$clientArgs<ExtArgs>
+    client?: boolean | ClientDefaultArgs<ExtArgs>
     project?: boolean | InteractionLog$projectArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
   }
   export type InteractionLogIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    client?: boolean | InteractionLog$clientArgs<ExtArgs>
+    client?: boolean | ClientDefaultArgs<ExtArgs>
     project?: boolean | InteractionLog$projectArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
   }
@@ -2787,7 +2809,7 @@ export namespace Prisma {
   export type $InteractionLogPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "InteractionLog"
     objects: {
-      client: Prisma.$ClientPayload<ExtArgs> | null
+      client: Prisma.$ClientPayload<ExtArgs>
       project: Prisma.$ProjectPayload<ExtArgs> | null
       user: Prisma.$UserPayload<ExtArgs>
     }
@@ -2796,9 +2818,11 @@ export namespace Prisma {
       type: string
       notes: string
       date: Date
-      clientId: string | null
+      clientId: string
       projectId: string | null
       userId: string
+      createdAt: Date
+      updatedAt: Date
     }, ExtArgs["result"]["interactionLog"]>
     composites: {}
   }
@@ -3193,7 +3217,7 @@ export namespace Prisma {
    */
   export interface Prisma__InteractionLogClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    client<T extends InteractionLog$clientArgs<ExtArgs> = {}>(args?: Subset<T, InteractionLog$clientArgs<ExtArgs>>): Prisma__ClientClient<$Result.GetResult<Prisma.$ClientPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    client<T extends ClientDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ClientDefaultArgs<ExtArgs>>): Prisma__ClientClient<$Result.GetResult<Prisma.$ClientPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     project<T extends InteractionLog$projectArgs<ExtArgs> = {}>(args?: Subset<T, InteractionLog$projectArgs<ExtArgs>>): Prisma__ProjectClient<$Result.GetResult<Prisma.$ProjectPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
@@ -3232,6 +3256,8 @@ export namespace Prisma {
     readonly clientId: FieldRef<"InteractionLog", 'String'>
     readonly projectId: FieldRef<"InteractionLog", 'String'>
     readonly userId: FieldRef<"InteractionLog", 'String'>
+    readonly createdAt: FieldRef<"InteractionLog", 'DateTime'>
+    readonly updatedAt: FieldRef<"InteractionLog", 'DateTime'>
   }
     
 
@@ -3628,25 +3654,6 @@ export namespace Prisma {
   }
 
   /**
-   * InteractionLog.client
-   */
-  export type InteractionLog$clientArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Client
-     */
-    select?: ClientSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Client
-     */
-    omit?: ClientOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: ClientInclude<ExtArgs> | null
-    where?: ClientWhereInput
-  }
-
-  /**
    * InteractionLog.project
    */
   export type InteractionLog$projectArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -3853,7 +3860,7 @@ export namespace Prisma {
     notes: string | null
     dueDate: Date
     status: string
-    clientId: string | null
+    clientId: string
     projectId: string | null
     userId: string
     createdAt: Date
@@ -3888,7 +3895,7 @@ export namespace Prisma {
     userId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    client?: boolean | Reminder$clientArgs<ExtArgs>
+    client?: boolean | ClientDefaultArgs<ExtArgs>
     project?: boolean | Reminder$projectArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["reminder"]>
@@ -3904,7 +3911,7 @@ export namespace Prisma {
     userId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    client?: boolean | Reminder$clientArgs<ExtArgs>
+    client?: boolean | ClientDefaultArgs<ExtArgs>
     project?: boolean | Reminder$projectArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["reminder"]>
@@ -3920,7 +3927,7 @@ export namespace Prisma {
     userId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    client?: boolean | Reminder$clientArgs<ExtArgs>
+    client?: boolean | ClientDefaultArgs<ExtArgs>
     project?: boolean | Reminder$projectArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["reminder"]>
@@ -3940,17 +3947,17 @@ export namespace Prisma {
 
   export type ReminderOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "notes" | "dueDate" | "status" | "clientId" | "projectId" | "userId" | "createdAt" | "updatedAt", ExtArgs["result"]["reminder"]>
   export type ReminderInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    client?: boolean | Reminder$clientArgs<ExtArgs>
+    client?: boolean | ClientDefaultArgs<ExtArgs>
     project?: boolean | Reminder$projectArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
   }
   export type ReminderIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    client?: boolean | Reminder$clientArgs<ExtArgs>
+    client?: boolean | ClientDefaultArgs<ExtArgs>
     project?: boolean | Reminder$projectArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
   }
   export type ReminderIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    client?: boolean | Reminder$clientArgs<ExtArgs>
+    client?: boolean | ClientDefaultArgs<ExtArgs>
     project?: boolean | Reminder$projectArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
   }
@@ -3958,7 +3965,7 @@ export namespace Prisma {
   export type $ReminderPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Reminder"
     objects: {
-      client: Prisma.$ClientPayload<ExtArgs> | null
+      client: Prisma.$ClientPayload<ExtArgs>
       project: Prisma.$ProjectPayload<ExtArgs> | null
       user: Prisma.$UserPayload<ExtArgs>
     }
@@ -3968,7 +3975,7 @@ export namespace Prisma {
       notes: string | null
       dueDate: Date
       status: string
-      clientId: string | null
+      clientId: string
       projectId: string | null
       userId: string
       createdAt: Date
@@ -4367,7 +4374,7 @@ export namespace Prisma {
    */
   export interface Prisma__ReminderClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    client<T extends Reminder$clientArgs<ExtArgs> = {}>(args?: Subset<T, Reminder$clientArgs<ExtArgs>>): Prisma__ClientClient<$Result.GetResult<Prisma.$ClientPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    client<T extends ClientDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ClientDefaultArgs<ExtArgs>>): Prisma__ClientClient<$Result.GetResult<Prisma.$ClientPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     project<T extends Reminder$projectArgs<ExtArgs> = {}>(args?: Subset<T, Reminder$projectArgs<ExtArgs>>): Prisma__ProjectClient<$Result.GetResult<Prisma.$ProjectPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
@@ -4802,25 +4809,6 @@ export namespace Prisma {
      * Limit how many Reminders to delete.
      */
     limit?: number
-  }
-
-  /**
-   * Reminder.client
-   */
-  export type Reminder$clientArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Client
-     */
-    select?: ClientSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Client
-     */
-    omit?: ClientOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: ClientInclude<ExtArgs> | null
-    where?: ClientWhereInput
   }
 
   /**
@@ -6080,7 +6068,9 @@ export namespace Prisma {
   export type ProjectMinAggregateOutputType = {
     id: string | null
     title: string | null
+    description: string | null
     budget: number | null
+    startDate: Date | null
     deadline: Date | null
     status: string | null
     clientId: string | null
@@ -6092,7 +6082,9 @@ export namespace Prisma {
   export type ProjectMaxAggregateOutputType = {
     id: string | null
     title: string | null
+    description: string | null
     budget: number | null
+    startDate: Date | null
     deadline: Date | null
     status: string | null
     clientId: string | null
@@ -6104,7 +6096,9 @@ export namespace Prisma {
   export type ProjectCountAggregateOutputType = {
     id: number
     title: number
+    description: number
     budget: number
+    startDate: number
     deadline: number
     status: number
     clientId: number
@@ -6126,7 +6120,9 @@ export namespace Prisma {
   export type ProjectMinAggregateInputType = {
     id?: true
     title?: true
+    description?: true
     budget?: true
+    startDate?: true
     deadline?: true
     status?: true
     clientId?: true
@@ -6138,7 +6134,9 @@ export namespace Prisma {
   export type ProjectMaxAggregateInputType = {
     id?: true
     title?: true
+    description?: true
     budget?: true
+    startDate?: true
     deadline?: true
     status?: true
     clientId?: true
@@ -6150,7 +6148,9 @@ export namespace Prisma {
   export type ProjectCountAggregateInputType = {
     id?: true
     title?: true
+    description?: true
     budget?: true
+    startDate?: true
     deadline?: true
     status?: true
     clientId?: true
@@ -6249,7 +6249,9 @@ export namespace Prisma {
   export type ProjectGroupByOutputType = {
     id: string
     title: string
+    description: string | null
     budget: number
+    startDate: Date
     deadline: Date
     status: string
     clientId: string
@@ -6280,7 +6282,9 @@ export namespace Prisma {
   export type ProjectSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     title?: boolean
+    description?: boolean
     budget?: boolean
+    startDate?: boolean
     deadline?: boolean
     status?: boolean
     clientId?: boolean
@@ -6297,7 +6301,9 @@ export namespace Prisma {
   export type ProjectSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     title?: boolean
+    description?: boolean
     budget?: boolean
+    startDate?: boolean
     deadline?: boolean
     status?: boolean
     clientId?: boolean
@@ -6311,7 +6317,9 @@ export namespace Prisma {
   export type ProjectSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     title?: boolean
+    description?: boolean
     budget?: boolean
+    startDate?: boolean
     deadline?: boolean
     status?: boolean
     clientId?: boolean
@@ -6325,7 +6333,9 @@ export namespace Prisma {
   export type ProjectSelectScalar = {
     id?: boolean
     title?: boolean
+    description?: boolean
     budget?: boolean
+    startDate?: boolean
     deadline?: boolean
     status?: boolean
     clientId?: boolean
@@ -6334,7 +6344,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type ProjectOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "budget" | "deadline" | "status" | "clientId" | "userId" | "createdAt" | "updatedAt", ExtArgs["result"]["project"]>
+  export type ProjectOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "description" | "budget" | "startDate" | "deadline" | "status" | "clientId" | "userId" | "createdAt" | "updatedAt", ExtArgs["result"]["project"]>
   export type ProjectInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     client?: boolean | ClientDefaultArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
@@ -6362,7 +6372,9 @@ export namespace Prisma {
     scalars: $Extensions.GetPayloadResult<{
       id: string
       title: string
+      description: string | null
       budget: number
+      startDate: Date
       deadline: Date
       status: string
       clientId: string
@@ -6798,7 +6810,9 @@ export namespace Prisma {
   interface ProjectFieldRefs {
     readonly id: FieldRef<"Project", 'String'>
     readonly title: FieldRef<"Project", 'String'>
+    readonly description: FieldRef<"Project", 'String'>
     readonly budget: FieldRef<"Project", 'Float'>
+    readonly startDate: FieldRef<"Project", 'DateTime'>
     readonly deadline: FieldRef<"Project", 'DateTime'>
     readonly status: FieldRef<"Project", 'String'>
     readonly clientId: FieldRef<"Project", 'String'>
@@ -7300,7 +7314,9 @@ export namespace Prisma {
     date: 'date',
     clientId: 'clientId',
     projectId: 'projectId',
-    userId: 'userId'
+    userId: 'userId',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
   };
 
   export type InteractionLogScalarFieldEnum = (typeof InteractionLogScalarFieldEnum)[keyof typeof InteractionLogScalarFieldEnum]
@@ -7340,7 +7356,9 @@ export namespace Prisma {
   export const ProjectScalarFieldEnum: {
     id: 'id',
     title: 'title',
+    description: 'description',
     budget: 'budget',
+    startDate: 'startDate',
     deadline: 'deadline',
     status: 'status',
     clientId: 'clientId',
@@ -7517,10 +7535,12 @@ export namespace Prisma {
     type?: StringFilter<"InteractionLog"> | string
     notes?: StringFilter<"InteractionLog"> | string
     date?: DateTimeFilter<"InteractionLog"> | Date | string
-    clientId?: StringNullableFilter<"InteractionLog"> | string | null
+    clientId?: StringFilter<"InteractionLog"> | string
     projectId?: StringNullableFilter<"InteractionLog"> | string | null
     userId?: StringFilter<"InteractionLog"> | string
-    client?: XOR<ClientNullableScalarRelationFilter, ClientWhereInput> | null
+    createdAt?: DateTimeFilter<"InteractionLog"> | Date | string
+    updatedAt?: DateTimeFilter<"InteractionLog"> | Date | string
+    client?: XOR<ClientScalarRelationFilter, ClientWhereInput>
     project?: XOR<ProjectNullableScalarRelationFilter, ProjectWhereInput> | null
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }
@@ -7530,9 +7550,11 @@ export namespace Prisma {
     type?: SortOrder
     notes?: SortOrder
     date?: SortOrder
-    clientId?: SortOrderInput | SortOrder
+    clientId?: SortOrder
     projectId?: SortOrderInput | SortOrder
     userId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
     client?: ClientOrderByWithRelationInput
     project?: ProjectOrderByWithRelationInput
     user?: UserOrderByWithRelationInput
@@ -7546,10 +7568,12 @@ export namespace Prisma {
     type?: StringFilter<"InteractionLog"> | string
     notes?: StringFilter<"InteractionLog"> | string
     date?: DateTimeFilter<"InteractionLog"> | Date | string
-    clientId?: StringNullableFilter<"InteractionLog"> | string | null
+    clientId?: StringFilter<"InteractionLog"> | string
     projectId?: StringNullableFilter<"InteractionLog"> | string | null
     userId?: StringFilter<"InteractionLog"> | string
-    client?: XOR<ClientNullableScalarRelationFilter, ClientWhereInput> | null
+    createdAt?: DateTimeFilter<"InteractionLog"> | Date | string
+    updatedAt?: DateTimeFilter<"InteractionLog"> | Date | string
+    client?: XOR<ClientScalarRelationFilter, ClientWhereInput>
     project?: XOR<ProjectNullableScalarRelationFilter, ProjectWhereInput> | null
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }, "id">
@@ -7559,9 +7583,11 @@ export namespace Prisma {
     type?: SortOrder
     notes?: SortOrder
     date?: SortOrder
-    clientId?: SortOrderInput | SortOrder
+    clientId?: SortOrder
     projectId?: SortOrderInput | SortOrder
     userId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
     _count?: InteractionLogCountOrderByAggregateInput
     _max?: InteractionLogMaxOrderByAggregateInput
     _min?: InteractionLogMinOrderByAggregateInput
@@ -7575,9 +7601,11 @@ export namespace Prisma {
     type?: StringWithAggregatesFilter<"InteractionLog"> | string
     notes?: StringWithAggregatesFilter<"InteractionLog"> | string
     date?: DateTimeWithAggregatesFilter<"InteractionLog"> | Date | string
-    clientId?: StringNullableWithAggregatesFilter<"InteractionLog"> | string | null
+    clientId?: StringWithAggregatesFilter<"InteractionLog"> | string
     projectId?: StringNullableWithAggregatesFilter<"InteractionLog"> | string | null
     userId?: StringWithAggregatesFilter<"InteractionLog"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"InteractionLog"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"InteractionLog"> | Date | string
   }
 
   export type ReminderWhereInput = {
@@ -7589,12 +7617,12 @@ export namespace Prisma {
     notes?: StringNullableFilter<"Reminder"> | string | null
     dueDate?: DateTimeFilter<"Reminder"> | Date | string
     status?: StringFilter<"Reminder"> | string
-    clientId?: StringNullableFilter<"Reminder"> | string | null
+    clientId?: StringFilter<"Reminder"> | string
     projectId?: StringNullableFilter<"Reminder"> | string | null
     userId?: StringFilter<"Reminder"> | string
     createdAt?: DateTimeFilter<"Reminder"> | Date | string
     updatedAt?: DateTimeFilter<"Reminder"> | Date | string
-    client?: XOR<ClientNullableScalarRelationFilter, ClientWhereInput> | null
+    client?: XOR<ClientScalarRelationFilter, ClientWhereInput>
     project?: XOR<ProjectNullableScalarRelationFilter, ProjectWhereInput> | null
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }
@@ -7605,7 +7633,7 @@ export namespace Prisma {
     notes?: SortOrderInput | SortOrder
     dueDate?: SortOrder
     status?: SortOrder
-    clientId?: SortOrderInput | SortOrder
+    clientId?: SortOrder
     projectId?: SortOrderInput | SortOrder
     userId?: SortOrder
     createdAt?: SortOrder
@@ -7624,12 +7652,12 @@ export namespace Prisma {
     notes?: StringNullableFilter<"Reminder"> | string | null
     dueDate?: DateTimeFilter<"Reminder"> | Date | string
     status?: StringFilter<"Reminder"> | string
-    clientId?: StringNullableFilter<"Reminder"> | string | null
+    clientId?: StringFilter<"Reminder"> | string
     projectId?: StringNullableFilter<"Reminder"> | string | null
     userId?: StringFilter<"Reminder"> | string
     createdAt?: DateTimeFilter<"Reminder"> | Date | string
     updatedAt?: DateTimeFilter<"Reminder"> | Date | string
-    client?: XOR<ClientNullableScalarRelationFilter, ClientWhereInput> | null
+    client?: XOR<ClientScalarRelationFilter, ClientWhereInput>
     project?: XOR<ProjectNullableScalarRelationFilter, ProjectWhereInput> | null
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }, "id">
@@ -7640,7 +7668,7 @@ export namespace Prisma {
     notes?: SortOrderInput | SortOrder
     dueDate?: SortOrder
     status?: SortOrder
-    clientId?: SortOrderInput | SortOrder
+    clientId?: SortOrder
     projectId?: SortOrderInput | SortOrder
     userId?: SortOrder
     createdAt?: SortOrder
@@ -7659,7 +7687,7 @@ export namespace Prisma {
     notes?: StringNullableWithAggregatesFilter<"Reminder"> | string | null
     dueDate?: DateTimeWithAggregatesFilter<"Reminder"> | Date | string
     status?: StringWithAggregatesFilter<"Reminder"> | string
-    clientId?: StringNullableWithAggregatesFilter<"Reminder"> | string | null
+    clientId?: StringWithAggregatesFilter<"Reminder"> | string
     projectId?: StringNullableWithAggregatesFilter<"Reminder"> | string | null
     userId?: StringWithAggregatesFilter<"Reminder"> | string
     createdAt?: DateTimeWithAggregatesFilter<"Reminder"> | Date | string
@@ -7756,7 +7784,9 @@ export namespace Prisma {
     NOT?: ProjectWhereInput | ProjectWhereInput[]
     id?: StringFilter<"Project"> | string
     title?: StringFilter<"Project"> | string
+    description?: StringNullableFilter<"Project"> | string | null
     budget?: FloatFilter<"Project"> | number
+    startDate?: DateTimeFilter<"Project"> | Date | string
     deadline?: DateTimeFilter<"Project"> | Date | string
     status?: StringFilter<"Project"> | string
     clientId?: StringFilter<"Project"> | string
@@ -7772,7 +7802,9 @@ export namespace Prisma {
   export type ProjectOrderByWithRelationInput = {
     id?: SortOrder
     title?: SortOrder
+    description?: SortOrderInput | SortOrder
     budget?: SortOrder
+    startDate?: SortOrder
     deadline?: SortOrder
     status?: SortOrder
     clientId?: SortOrder
@@ -7791,7 +7823,9 @@ export namespace Prisma {
     OR?: ProjectWhereInput[]
     NOT?: ProjectWhereInput | ProjectWhereInput[]
     title?: StringFilter<"Project"> | string
+    description?: StringNullableFilter<"Project"> | string | null
     budget?: FloatFilter<"Project"> | number
+    startDate?: DateTimeFilter<"Project"> | Date | string
     deadline?: DateTimeFilter<"Project"> | Date | string
     status?: StringFilter<"Project"> | string
     clientId?: StringFilter<"Project"> | string
@@ -7807,7 +7841,9 @@ export namespace Prisma {
   export type ProjectOrderByWithAggregationInput = {
     id?: SortOrder
     title?: SortOrder
+    description?: SortOrderInput | SortOrder
     budget?: SortOrder
+    startDate?: SortOrder
     deadline?: SortOrder
     status?: SortOrder
     clientId?: SortOrder
@@ -7827,7 +7863,9 @@ export namespace Prisma {
     NOT?: ProjectScalarWhereWithAggregatesInput | ProjectScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"Project"> | string
     title?: StringWithAggregatesFilter<"Project"> | string
+    description?: StringNullableWithAggregatesFilter<"Project"> | string | null
     budget?: FloatWithAggregatesFilter<"Project"> | number
+    startDate?: DateTimeWithAggregatesFilter<"Project"> | Date | string
     deadline?: DateTimeWithAggregatesFilter<"Project"> | Date | string
     status?: StringWithAggregatesFilter<"Project"> | string
     clientId?: StringWithAggregatesFilter<"Project"> | string
@@ -7920,7 +7958,9 @@ export namespace Prisma {
     type: string
     notes: string
     date?: Date | string
-    client?: ClientCreateNestedOneWithoutLogsInput
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    client: ClientCreateNestedOneWithoutLogsInput
     project?: ProjectCreateNestedOneWithoutLogsInput
     user: UserCreateNestedOneWithoutLogsInput
   }
@@ -7930,9 +7970,11 @@ export namespace Prisma {
     type: string
     notes: string
     date?: Date | string
-    clientId?: string | null
+    clientId: string
     projectId?: string | null
     userId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type InteractionLogUpdateInput = {
@@ -7940,7 +7982,9 @@ export namespace Prisma {
     type?: StringFieldUpdateOperationsInput | string
     notes?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
-    client?: ClientUpdateOneWithoutLogsNestedInput
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    client?: ClientUpdateOneRequiredWithoutLogsNestedInput
     project?: ProjectUpdateOneWithoutLogsNestedInput
     user?: UserUpdateOneRequiredWithoutLogsNestedInput
   }
@@ -7950,9 +7994,11 @@ export namespace Prisma {
     type?: StringFieldUpdateOperationsInput | string
     notes?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
-    clientId?: NullableStringFieldUpdateOperationsInput | string | null
+    clientId?: StringFieldUpdateOperationsInput | string
     projectId?: NullableStringFieldUpdateOperationsInput | string | null
     userId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type InteractionLogCreateManyInput = {
@@ -7960,9 +8006,11 @@ export namespace Prisma {
     type: string
     notes: string
     date?: Date | string
-    clientId?: string | null
+    clientId: string
     projectId?: string | null
     userId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type InteractionLogUpdateManyMutationInput = {
@@ -7970,6 +8018,8 @@ export namespace Prisma {
     type?: StringFieldUpdateOperationsInput | string
     notes?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type InteractionLogUncheckedUpdateManyInput = {
@@ -7977,9 +8027,11 @@ export namespace Prisma {
     type?: StringFieldUpdateOperationsInput | string
     notes?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
-    clientId?: NullableStringFieldUpdateOperationsInput | string | null
+    clientId?: StringFieldUpdateOperationsInput | string
     projectId?: NullableStringFieldUpdateOperationsInput | string | null
     userId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type ReminderCreateInput = {
@@ -7990,7 +8042,7 @@ export namespace Prisma {
     status?: string
     createdAt?: Date | string
     updatedAt?: Date | string
-    client?: ClientCreateNestedOneWithoutRemindersInput
+    client: ClientCreateNestedOneWithoutRemindersInput
     project?: ProjectCreateNestedOneWithoutRemindersInput
     user: UserCreateNestedOneWithoutRemindersInput
   }
@@ -8001,7 +8053,7 @@ export namespace Prisma {
     notes?: string | null
     dueDate: Date | string
     status?: string
-    clientId?: string | null
+    clientId: string
     projectId?: string | null
     userId: string
     createdAt?: Date | string
@@ -8016,7 +8068,7 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    client?: ClientUpdateOneWithoutRemindersNestedInput
+    client?: ClientUpdateOneRequiredWithoutRemindersNestedInput
     project?: ProjectUpdateOneWithoutRemindersNestedInput
     user?: UserUpdateOneRequiredWithoutRemindersNestedInput
   }
@@ -8027,7 +8079,7 @@ export namespace Prisma {
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: StringFieldUpdateOperationsInput | string
-    clientId?: NullableStringFieldUpdateOperationsInput | string | null
+    clientId?: StringFieldUpdateOperationsInput | string
     projectId?: NullableStringFieldUpdateOperationsInput | string | null
     userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -8040,7 +8092,7 @@ export namespace Prisma {
     notes?: string | null
     dueDate: Date | string
     status?: string
-    clientId?: string | null
+    clientId: string
     projectId?: string | null
     userId: string
     createdAt?: Date | string
@@ -8063,7 +8115,7 @@ export namespace Prisma {
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: StringFieldUpdateOperationsInput | string
-    clientId?: NullableStringFieldUpdateOperationsInput | string | null
+    clientId?: StringFieldUpdateOperationsInput | string
     projectId?: NullableStringFieldUpdateOperationsInput | string | null
     userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -8168,7 +8220,9 @@ export namespace Prisma {
   export type ProjectCreateInput = {
     id?: string
     title: string
+    description?: string | null
     budget: number
+    startDate?: Date | string
     deadline: Date | string
     status: string
     createdAt?: Date | string
@@ -8182,7 +8236,9 @@ export namespace Prisma {
   export type ProjectUncheckedCreateInput = {
     id?: string
     title: string
+    description?: string | null
     budget: number
+    startDate?: Date | string
     deadline: Date | string
     status: string
     clientId: string
@@ -8196,7 +8252,9 @@ export namespace Prisma {
   export type ProjectUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     budget?: FloatFieldUpdateOperationsInput | number
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
     deadline?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -8210,7 +8268,9 @@ export namespace Prisma {
   export type ProjectUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     budget?: FloatFieldUpdateOperationsInput | number
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
     deadline?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: StringFieldUpdateOperationsInput | string
     clientId?: StringFieldUpdateOperationsInput | string
@@ -8224,7 +8284,9 @@ export namespace Prisma {
   export type ProjectCreateManyInput = {
     id?: string
     title: string
+    description?: string | null
     budget: number
+    startDate?: Date | string
     deadline: Date | string
     status: string
     clientId: string
@@ -8236,7 +8298,9 @@ export namespace Prisma {
   export type ProjectUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     budget?: FloatFieldUpdateOperationsInput | number
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
     deadline?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -8246,7 +8310,9 @@ export namespace Prisma {
   export type ProjectUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     budget?: FloatFieldUpdateOperationsInput | number
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
     deadline?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: StringFieldUpdateOperationsInput | string
     clientId?: StringFieldUpdateOperationsInput | string
@@ -8418,9 +8484,9 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
-  export type ClientNullableScalarRelationFilter = {
-    is?: ClientWhereInput | null
-    isNot?: ClientWhereInput | null
+  export type ClientScalarRelationFilter = {
+    is?: ClientWhereInput
+    isNot?: ClientWhereInput
   }
 
   export type ProjectNullableScalarRelationFilter = {
@@ -8441,6 +8507,8 @@ export namespace Prisma {
     clientId?: SortOrder
     projectId?: SortOrder
     userId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
   }
 
   export type InteractionLogMaxOrderByAggregateInput = {
@@ -8451,6 +8519,8 @@ export namespace Prisma {
     clientId?: SortOrder
     projectId?: SortOrder
     userId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
   }
 
   export type InteractionLogMinOrderByAggregateInput = {
@@ -8461,6 +8531,8 @@ export namespace Prisma {
     clientId?: SortOrder
     projectId?: SortOrder
     userId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
   }
 
   export type ReminderCountOrderByAggregateInput = {
@@ -8549,15 +8621,12 @@ export namespace Prisma {
     not?: NestedFloatFilter<$PrismaModel> | number
   }
 
-  export type ClientScalarRelationFilter = {
-    is?: ClientWhereInput
-    isNot?: ClientWhereInput
-  }
-
   export type ProjectCountOrderByAggregateInput = {
     id?: SortOrder
     title?: SortOrder
+    description?: SortOrder
     budget?: SortOrder
+    startDate?: SortOrder
     deadline?: SortOrder
     status?: SortOrder
     clientId?: SortOrder
@@ -8573,7 +8642,9 @@ export namespace Prisma {
   export type ProjectMaxOrderByAggregateInput = {
     id?: SortOrder
     title?: SortOrder
+    description?: SortOrder
     budget?: SortOrder
+    startDate?: SortOrder
     deadline?: SortOrder
     status?: SortOrder
     clientId?: SortOrder
@@ -8585,7 +8656,9 @@ export namespace Prisma {
   export type ProjectMinOrderByAggregateInput = {
     id?: SortOrder
     title?: SortOrder
+    description?: SortOrder
     budget?: SortOrder
+    startDate?: SortOrder
     deadline?: SortOrder
     status?: SortOrder
     clientId?: SortOrder
@@ -8812,12 +8885,10 @@ export namespace Prisma {
     connect?: UserWhereUniqueInput
   }
 
-  export type ClientUpdateOneWithoutLogsNestedInput = {
+  export type ClientUpdateOneRequiredWithoutLogsNestedInput = {
     create?: XOR<ClientCreateWithoutLogsInput, ClientUncheckedCreateWithoutLogsInput>
     connectOrCreate?: ClientCreateOrConnectWithoutLogsInput
     upsert?: ClientUpsertWithoutLogsInput
-    disconnect?: ClientWhereInput | boolean
-    delete?: ClientWhereInput | boolean
     connect?: ClientWhereUniqueInput
     update?: XOR<XOR<ClientUpdateToOneWithWhereWithoutLogsInput, ClientUpdateWithoutLogsInput>, ClientUncheckedUpdateWithoutLogsInput>
   }
@@ -8858,12 +8929,10 @@ export namespace Prisma {
     connect?: UserWhereUniqueInput
   }
 
-  export type ClientUpdateOneWithoutRemindersNestedInput = {
+  export type ClientUpdateOneRequiredWithoutRemindersNestedInput = {
     create?: XOR<ClientCreateWithoutRemindersInput, ClientUncheckedCreateWithoutRemindersInput>
     connectOrCreate?: ClientCreateOrConnectWithoutRemindersInput
     upsert?: ClientUpsertWithoutRemindersInput
-    disconnect?: ClientWhereInput | boolean
-    delete?: ClientWhereInput | boolean
     connect?: ClientWhereUniqueInput
     update?: XOR<XOR<ClientUpdateToOneWithWhereWithoutRemindersInput, ClientUpdateWithoutRemindersInput>, ClientUncheckedUpdateWithoutRemindersInput>
   }
@@ -9323,7 +9392,9 @@ export namespace Prisma {
   export type ProjectCreateWithoutUserInput = {
     id?: string
     title: string
+    description?: string | null
     budget: number
+    startDate?: Date | string
     deadline: Date | string
     status: string
     createdAt?: Date | string
@@ -9336,7 +9407,9 @@ export namespace Prisma {
   export type ProjectUncheckedCreateWithoutUserInput = {
     id?: string
     title: string
+    description?: string | null
     budget: number
+    startDate?: Date | string
     deadline: Date | string
     status: string
     clientId: string
@@ -9361,7 +9434,9 @@ export namespace Prisma {
     type: string
     notes: string
     date?: Date | string
-    client?: ClientCreateNestedOneWithoutLogsInput
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    client: ClientCreateNestedOneWithoutLogsInput
     project?: ProjectCreateNestedOneWithoutLogsInput
   }
 
@@ -9370,8 +9445,10 @@ export namespace Prisma {
     type: string
     notes: string
     date?: Date | string
-    clientId?: string | null
+    clientId: string
     projectId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type InteractionLogCreateOrConnectWithoutUserInput = {
@@ -9392,7 +9469,7 @@ export namespace Prisma {
     status?: string
     createdAt?: Date | string
     updatedAt?: Date | string
-    client?: ClientCreateNestedOneWithoutRemindersInput
+    client: ClientCreateNestedOneWithoutRemindersInput
     project?: ProjectCreateNestedOneWithoutRemindersInput
   }
 
@@ -9402,7 +9479,7 @@ export namespace Prisma {
     notes?: string | null
     dueDate: Date | string
     status?: string
-    clientId?: string | null
+    clientId: string
     projectId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -9471,7 +9548,9 @@ export namespace Prisma {
     NOT?: ProjectScalarWhereInput | ProjectScalarWhereInput[]
     id?: StringFilter<"Project"> | string
     title?: StringFilter<"Project"> | string
+    description?: StringNullableFilter<"Project"> | string | null
     budget?: FloatFilter<"Project"> | number
+    startDate?: DateTimeFilter<"Project"> | Date | string
     deadline?: DateTimeFilter<"Project"> | Date | string
     status?: StringFilter<"Project"> | string
     clientId?: StringFilter<"Project"> | string
@@ -9504,9 +9583,11 @@ export namespace Prisma {
     type?: StringFilter<"InteractionLog"> | string
     notes?: StringFilter<"InteractionLog"> | string
     date?: DateTimeFilter<"InteractionLog"> | Date | string
-    clientId?: StringNullableFilter<"InteractionLog"> | string | null
+    clientId?: StringFilter<"InteractionLog"> | string
     projectId?: StringNullableFilter<"InteractionLog"> | string | null
     userId?: StringFilter<"InteractionLog"> | string
+    createdAt?: DateTimeFilter<"InteractionLog"> | Date | string
+    updatedAt?: DateTimeFilter<"InteractionLog"> | Date | string
   }
 
   export type ReminderUpsertWithWhereUniqueWithoutUserInput = {
@@ -9534,7 +9615,7 @@ export namespace Prisma {
     notes?: StringNullableFilter<"Reminder"> | string | null
     dueDate?: DateTimeFilter<"Reminder"> | Date | string
     status?: StringFilter<"Reminder"> | string
-    clientId?: StringNullableFilter<"Reminder"> | string | null
+    clientId?: StringFilter<"Reminder"> | string
     projectId?: StringNullableFilter<"Reminder"> | string | null
     userId?: StringFilter<"Reminder"> | string
     createdAt?: DateTimeFilter<"Reminder"> | Date | string
@@ -9577,7 +9658,9 @@ export namespace Prisma {
   export type ProjectCreateWithoutLogsInput = {
     id?: string
     title: string
+    description?: string | null
     budget: number
+    startDate?: Date | string
     deadline: Date | string
     status: string
     createdAt?: Date | string
@@ -9590,7 +9673,9 @@ export namespace Prisma {
   export type ProjectUncheckedCreateWithoutLogsInput = {
     id?: string
     title: string
+    description?: string | null
     budget: number
+    startDate?: Date | string
     deadline: Date | string
     status: string
     clientId: string
@@ -9687,7 +9772,9 @@ export namespace Prisma {
   export type ProjectUpdateWithoutLogsInput = {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     budget?: FloatFieldUpdateOperationsInput | number
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
     deadline?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -9700,7 +9787,9 @@ export namespace Prisma {
   export type ProjectUncheckedUpdateWithoutLogsInput = {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     budget?: FloatFieldUpdateOperationsInput | number
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
     deadline?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: StringFieldUpdateOperationsInput | string
     clientId?: StringFieldUpdateOperationsInput | string
@@ -9781,7 +9870,9 @@ export namespace Prisma {
   export type ProjectCreateWithoutRemindersInput = {
     id?: string
     title: string
+    description?: string | null
     budget: number
+    startDate?: Date | string
     deadline: Date | string
     status: string
     createdAt?: Date | string
@@ -9794,7 +9885,9 @@ export namespace Prisma {
   export type ProjectUncheckedCreateWithoutRemindersInput = {
     id?: string
     title: string
+    description?: string | null
     budget: number
+    startDate?: Date | string
     deadline: Date | string
     status: string
     clientId: string
@@ -9891,7 +9984,9 @@ export namespace Prisma {
   export type ProjectUpdateWithoutRemindersInput = {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     budget?: FloatFieldUpdateOperationsInput | number
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
     deadline?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -9904,7 +9999,9 @@ export namespace Prisma {
   export type ProjectUncheckedUpdateWithoutRemindersInput = {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     budget?: FloatFieldUpdateOperationsInput | number
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
     deadline?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: StringFieldUpdateOperationsInput | string
     clientId?: StringFieldUpdateOperationsInput | string
@@ -9952,7 +10049,9 @@ export namespace Prisma {
   export type ProjectCreateWithoutClientInput = {
     id?: string
     title: string
+    description?: string | null
     budget: number
+    startDate?: Date | string
     deadline: Date | string
     status: string
     createdAt?: Date | string
@@ -9965,7 +10064,9 @@ export namespace Prisma {
   export type ProjectUncheckedCreateWithoutClientInput = {
     id?: string
     title: string
+    description?: string | null
     budget: number
+    startDate?: Date | string
     deadline: Date | string
     status: string
     userId: string
@@ -9990,6 +10091,8 @@ export namespace Prisma {
     type: string
     notes: string
     date?: Date | string
+    createdAt?: Date | string
+    updatedAt?: Date | string
     project?: ProjectCreateNestedOneWithoutLogsInput
     user: UserCreateNestedOneWithoutLogsInput
   }
@@ -10001,6 +10104,8 @@ export namespace Prisma {
     date?: Date | string
     projectId?: string | null
     userId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type InteractionLogCreateOrConnectWithoutClientInput = {
@@ -10226,7 +10331,9 @@ export namespace Prisma {
     type: string
     notes: string
     date?: Date | string
-    client?: ClientCreateNestedOneWithoutLogsInput
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    client: ClientCreateNestedOneWithoutLogsInput
     user: UserCreateNestedOneWithoutLogsInput
   }
 
@@ -10235,8 +10342,10 @@ export namespace Prisma {
     type: string
     notes: string
     date?: Date | string
-    clientId?: string | null
+    clientId: string
     userId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type InteractionLogCreateOrConnectWithoutProjectInput = {
@@ -10257,7 +10366,7 @@ export namespace Prisma {
     status?: string
     createdAt?: Date | string
     updatedAt?: Date | string
-    client?: ClientCreateNestedOneWithoutRemindersInput
+    client: ClientCreateNestedOneWithoutRemindersInput
     user: UserCreateNestedOneWithoutRemindersInput
   }
 
@@ -10267,7 +10376,7 @@ export namespace Prisma {
     notes?: string | null
     dueDate: Date | string
     status?: string
-    clientId?: string | null
+    clientId: string
     userId: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -10403,7 +10512,9 @@ export namespace Prisma {
   export type ProjectCreateManyUserInput = {
     id?: string
     title: string
+    description?: string | null
     budget: number
+    startDate?: Date | string
     deadline: Date | string
     status: string
     clientId: string
@@ -10416,8 +10527,10 @@ export namespace Prisma {
     type: string
     notes: string
     date?: Date | string
-    clientId?: string | null
+    clientId: string
     projectId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type ReminderCreateManyUserInput = {
@@ -10426,7 +10539,7 @@ export namespace Prisma {
     notes?: string | null
     dueDate: Date | string
     status?: string
-    clientId?: string | null
+    clientId: string
     projectId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -10474,7 +10587,9 @@ export namespace Prisma {
   export type ProjectUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     budget?: FloatFieldUpdateOperationsInput | number
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
     deadline?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -10487,7 +10602,9 @@ export namespace Prisma {
   export type ProjectUncheckedUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     budget?: FloatFieldUpdateOperationsInput | number
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
     deadline?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: StringFieldUpdateOperationsInput | string
     clientId?: StringFieldUpdateOperationsInput | string
@@ -10500,7 +10617,9 @@ export namespace Prisma {
   export type ProjectUncheckedUpdateManyWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     budget?: FloatFieldUpdateOperationsInput | number
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
     deadline?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: StringFieldUpdateOperationsInput | string
     clientId?: StringFieldUpdateOperationsInput | string
@@ -10513,7 +10632,9 @@ export namespace Prisma {
     type?: StringFieldUpdateOperationsInput | string
     notes?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
-    client?: ClientUpdateOneWithoutLogsNestedInput
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    client?: ClientUpdateOneRequiredWithoutLogsNestedInput
     project?: ProjectUpdateOneWithoutLogsNestedInput
   }
 
@@ -10522,8 +10643,10 @@ export namespace Prisma {
     type?: StringFieldUpdateOperationsInput | string
     notes?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
-    clientId?: NullableStringFieldUpdateOperationsInput | string | null
+    clientId?: StringFieldUpdateOperationsInput | string
     projectId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type InteractionLogUncheckedUpdateManyWithoutUserInput = {
@@ -10531,8 +10654,10 @@ export namespace Prisma {
     type?: StringFieldUpdateOperationsInput | string
     notes?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
-    clientId?: NullableStringFieldUpdateOperationsInput | string | null
+    clientId?: StringFieldUpdateOperationsInput | string
     projectId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type ReminderUpdateWithoutUserInput = {
@@ -10543,7 +10668,7 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    client?: ClientUpdateOneWithoutRemindersNestedInput
+    client?: ClientUpdateOneRequiredWithoutRemindersNestedInput
     project?: ProjectUpdateOneWithoutRemindersNestedInput
   }
 
@@ -10553,7 +10678,7 @@ export namespace Prisma {
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: StringFieldUpdateOperationsInput | string
-    clientId?: NullableStringFieldUpdateOperationsInput | string | null
+    clientId?: StringFieldUpdateOperationsInput | string
     projectId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -10565,7 +10690,7 @@ export namespace Prisma {
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: StringFieldUpdateOperationsInput | string
-    clientId?: NullableStringFieldUpdateOperationsInput | string | null
+    clientId?: StringFieldUpdateOperationsInput | string
     projectId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -10574,7 +10699,9 @@ export namespace Prisma {
   export type ProjectCreateManyClientInput = {
     id?: string
     title: string
+    description?: string | null
     budget: number
+    startDate?: Date | string
     deadline: Date | string
     status: string
     userId: string
@@ -10589,6 +10716,8 @@ export namespace Prisma {
     date?: Date | string
     projectId?: string | null
     userId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type ReminderCreateManyClientInput = {
@@ -10606,7 +10735,9 @@ export namespace Prisma {
   export type ProjectUpdateWithoutClientInput = {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     budget?: FloatFieldUpdateOperationsInput | number
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
     deadline?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -10619,7 +10750,9 @@ export namespace Prisma {
   export type ProjectUncheckedUpdateWithoutClientInput = {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     budget?: FloatFieldUpdateOperationsInput | number
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
     deadline?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
@@ -10632,7 +10765,9 @@ export namespace Prisma {
   export type ProjectUncheckedUpdateManyWithoutClientInput = {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     budget?: FloatFieldUpdateOperationsInput | number
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
     deadline?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
@@ -10645,6 +10780,8 @@ export namespace Prisma {
     type?: StringFieldUpdateOperationsInput | string
     notes?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     project?: ProjectUpdateOneWithoutLogsNestedInput
     user?: UserUpdateOneRequiredWithoutLogsNestedInput
   }
@@ -10656,6 +10793,8 @@ export namespace Prisma {
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     projectId?: NullableStringFieldUpdateOperationsInput | string | null
     userId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type InteractionLogUncheckedUpdateManyWithoutClientInput = {
@@ -10665,6 +10804,8 @@ export namespace Prisma {
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     projectId?: NullableStringFieldUpdateOperationsInput | string | null
     userId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type ReminderUpdateWithoutClientInput = {
@@ -10708,8 +10849,10 @@ export namespace Prisma {
     type: string
     notes: string
     date?: Date | string
-    clientId?: string | null
+    clientId: string
     userId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type ReminderCreateManyProjectInput = {
@@ -10718,7 +10861,7 @@ export namespace Prisma {
     notes?: string | null
     dueDate: Date | string
     status?: string
-    clientId?: string | null
+    clientId: string
     userId: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -10729,7 +10872,9 @@ export namespace Prisma {
     type?: StringFieldUpdateOperationsInput | string
     notes?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
-    client?: ClientUpdateOneWithoutLogsNestedInput
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    client?: ClientUpdateOneRequiredWithoutLogsNestedInput
     user?: UserUpdateOneRequiredWithoutLogsNestedInput
   }
 
@@ -10738,8 +10883,10 @@ export namespace Prisma {
     type?: StringFieldUpdateOperationsInput | string
     notes?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
-    clientId?: NullableStringFieldUpdateOperationsInput | string | null
+    clientId?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type InteractionLogUncheckedUpdateManyWithoutProjectInput = {
@@ -10747,8 +10894,10 @@ export namespace Prisma {
     type?: StringFieldUpdateOperationsInput | string
     notes?: StringFieldUpdateOperationsInput | string
     date?: DateTimeFieldUpdateOperationsInput | Date | string
-    clientId?: NullableStringFieldUpdateOperationsInput | string | null
+    clientId?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type ReminderUpdateWithoutProjectInput = {
@@ -10759,7 +10908,7 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    client?: ClientUpdateOneWithoutRemindersNestedInput
+    client?: ClientUpdateOneRequiredWithoutRemindersNestedInput
     user?: UserUpdateOneRequiredWithoutRemindersNestedInput
   }
 
@@ -10769,7 +10918,7 @@ export namespace Prisma {
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: StringFieldUpdateOperationsInput | string
-    clientId?: NullableStringFieldUpdateOperationsInput | string | null
+    clientId?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -10781,7 +10930,7 @@ export namespace Prisma {
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: StringFieldUpdateOperationsInput | string
-    clientId?: NullableStringFieldUpdateOperationsInput | string | null
+    clientId?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string

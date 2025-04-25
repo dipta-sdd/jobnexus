@@ -6,36 +6,35 @@ import * as z from 'zod';
 import { toast } from 'react-hot-toast';
 import api from '@/lib/axios';
 import { useState, useEffect } from 'react';
-import { Client, Project, Reminder } from '@/lib/types';
+import { Client, Project, InteractionLog } from '@/lib/types';
 
-const reminderSchema = z.object({
-  title: z.string().min(1, 'Title is required'),
-  notes: z.string().optional(),
-  dueDate: z.string().min(1, 'Due date is required'),
-  status: z.string().min(1, 'Status is required'),
+const interactionLogSchema = z.object({
+  type: z.string().min(1, 'Type is required'),
+  notes: z.string().min(1, 'Notes are required'),
+  date: z.string().min(1, 'Date is required'),
   clientId: z.string().min(1, 'Client is required'),
   projectId: z.string().optional(),
 });
 
-type ReminderFormData = z.infer<typeof reminderSchema>;
+type InteractionLogFormData = z.infer<typeof interactionLogSchema>;
 
-interface AddReminderProps {
+interface AddInteractionLogProps {
   clients: Client[];
   onClose: () => void;
-  reminder?: Reminder;
+  log?: InteractionLog;
   clientId?: string;
   projectId?: string;
-  onUpdate: (data: Reminder) => void;
+  onUpdate: (data: InteractionLog) => void;
 }
 
-export default function AddReminder({ 
+export default function AddInteractionLog({ 
   clients, 
   onClose, 
-  reminder,
+  log,
   clientId: initialClientId,
   projectId: initialProjectId,
   onUpdate
-}: AddReminderProps) {
+}: AddInteractionLogProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [allProjects, setAllProjects] = useState<Project[]>([]);
 
@@ -46,15 +45,14 @@ export default function AddReminder({
     watch,
     setValue,
     formState: { errors },
-  } = useForm<ReminderFormData>({
-    resolver: zodResolver(reminderSchema),
-    defaultValues: reminder ? {
-      title: reminder.title,
-      notes: reminder.notes || '',
-      dueDate: new Date(reminder.dueDate).toISOString().slice(0, 16),
-      status: reminder.status || 'Pending',
-      clientId: reminder.clientId || '',
-      projectId: reminder.projectId || '',
+  } = useForm<InteractionLogFormData>({
+    resolver: zodResolver(interactionLogSchema),
+    defaultValues: log ? {
+      type: log.type,
+      notes: log.notes || '',
+      date: new Date(log.date).toISOString().slice(0, 16),
+      clientId: log.clientId || '',
+      projectId: log.projectId || '',
     } : {
       clientId: initialClientId || '',
       projectId: initialProjectId || '',
@@ -106,29 +104,29 @@ export default function AddReminder({
     return allProjects;
   };
 
-  const onSubmit = async (data: ReminderFormData) => {
+  const onSubmit = async (data: InteractionLogFormData) => {
     try {
       setIsSubmitting(true);
-      const reminderData = {
+      const logData = {
         ...data,
-        dueDate: new Date(data.dueDate),
+        date: new Date(data.date),
       };
       
-      if (reminder) {
-        const response = await api.put(`/reminders/${reminder.id}`, reminderData);
-        toast.success('Reminder updated successfully');
+      if (log) {
+        const response = await api.put(`/interaction-logs/${log.id}`, logData);
+        toast.success('Interaction log updated successfully');
         onUpdate(response.data);
         reset();
       } else {
-        const response = await api.post('/reminders', reminderData);
-        toast.success('Reminder added successfully');
+        const response = await api.post('/interaction-logs', logData);
+        toast.success('Interaction log added successfully');
         onClose(response.data);
         reset();
         onUpdate(response.data);
       }
     } catch (error) {
-      toast.error(reminder ? 'Failed to update reminder' : 'Failed to create reminder');
-      console.error('Error saving reminder:', error);
+      toast.error(log ? 'Failed to update interaction log' : 'Failed to create interaction log');
+      console.error('Error saving interaction log:', error);
     } finally {
       setIsSubmitting(false);
     }
@@ -137,26 +135,31 @@ export default function AddReminder({
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <div>
-        <label htmlFor="title" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-          Title *
+        <label htmlFor="type" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+          Type *
         </label>
         <div className="mt-1">
-          <input
-            id="title"
-            type="text"
-            {...register('title')}
+          <select
+            id="type"
+            {...register('type')}
             className="appearance-none block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 dark:bg-gray-700 dark:text-white sm:text-sm"
-            placeholder="Reminder Title"
-          />
+          >
+            <option value="">Select a type</option>
+            <option value="meeting">Meeting</option>
+            <option value="call">Call</option>
+            <option value="email">Email</option>
+            <option value="message">Message</option>
+            <option value="other">Other</option>
+          </select>
         </div>
-        {errors.title && (
-          <p className="mt-1 text-sm text-red-600">{errors.title.message}</p>
+        {errors.type && (
+          <p className="mt-1 text-sm text-red-600">{errors.type.message}</p>
         )}
       </div>
 
       <div>
         <label htmlFor="notes" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-          Notes
+          Notes *
         </label>
         <div className="mt-1">
           <textarea
@@ -164,48 +167,31 @@ export default function AddReminder({
             {...register('notes')}
             rows={4}
             className="appearance-none block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 dark:bg-gray-700 dark:text-white sm:text-sm"
-            placeholder="Additional notes..."
+            placeholder="Enter notes about the interaction..."
           />
         </div>
+        {errors.notes && (
+          <p className="mt-1 text-sm text-red-600">{errors.notes.message}</p>
+        )}
       </div>
 
       <div>
-        <label htmlFor="dueDate" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-          Due Date *
+        <label htmlFor="date" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+          Date *
         </label>
         <div className="mt-1">
           <input
-            id="dueDate"
+            id="date"
             type="datetime-local"
-            {...register('dueDate')}
+            {...register('date')}
             className="appearance-none block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 dark:bg-gray-700 dark:text-white sm:text-sm"
           />
         </div>
-        {errors.dueDate && (
-          <p className="mt-1 text-sm text-red-600">{errors.dueDate.message}</p>
+        {errors.date && (
+          <p className="mt-1 text-sm text-red-600">{errors.date.message}</p>
         )}
       </div>
-      
-      <div>
-        <label htmlFor="status" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-          Status *
-        </label>
-        <div className="mt-1">
-          <select
-            id="status"
-            {...register('status')}
-            className="appearance-none block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-emerald-500 focus:border-emerald-500 dark:bg-gray-700 dark:text-white sm:text-sm"
-          >
-            <option value="Pending">Pending</option>
-            <option value="Completed">Completed</option>
-            <option value="Cancelled">Cancelled</option>
-          </select>
-        </div>
-        {errors.status && (
-          <p className="mt-1 text-sm text-red-600">{errors.status.message}</p>
-        )}  
-      </div>
-      
+
       <div>
         <label htmlFor="clientId" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
           Client *
@@ -267,7 +253,7 @@ export default function AddReminder({
           disabled={isSubmitting}
           className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 disabled:opacity-50 transition-colors"
         >
-          {isSubmitting ? (reminder ? 'Updating...' : 'Creating...') : (reminder ? 'Update Reminder' : 'Create Reminder')}
+          {isSubmitting ? (log ? 'Updating...' : 'Creating...') : (log ? 'Update Log' : 'Create Log')}
         </button>
       </div>
     </form>

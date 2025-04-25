@@ -1,90 +1,148 @@
-import Image from "next/image";
 import Link from "next/link";
-import { MoreHorizontal } from "lucide-react";
+import {
+  Mail,
+  Phone,
+  Calendar,
+  AlertCircle,
+  FileText,
+  Clock,
+  FolderClosed,
+} from "lucide-react";
+import { Client, Project, Reminder } from "@/lib/types";
 
-interface Client {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  company?: string | null;
-  notes?: string | null;
-  projects: Array<{ id: string }>;
-  userId: string;
-  user: { id: string };
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-interface ClientRowProps {
+type ClientRowProps = {
   client: Client;
-}
+};
 
 export default function ClientRow({ client }: ClientRowProps) {
-  // Calculate derived values
-  const projectCount = client.projects.length;
-  
+  // Format date function
+  const formatDate = (dateString: string) => {
+    if (!dateString) return "N/A";
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  };
+
+  // Count active projects
+  const activeProjects = client?.projects?.filter(
+    (project: Project) => project.status !== "Completed"
+  ).length;
+
+  // Check for upcoming reminders (due in the next 48 hours)
+  const upcomingReminders = client?.reminders?.filter((reminder: Reminder) => {
+    const dueDate = new Date(reminder.dueDate);
+    const now = new Date();
+    const diffTime = dueDate.getTime() - now.getTime();
+    const diffHours = diffTime / (1000 * 60 * 60);
+    return diffHours > 0 && diffHours < 48 && reminder.status !== "Completed";
+  }).length;
+
   return (
-    <tr  className="hover:bg-gray-50 dark:hover:bg-gray-700/30">
+    <tr className="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
       <td className="px-6 py-4 whitespace-nowrap">
-        <div className="flex items-center">
-          <div className="flex-shrink-0 h-10 w-10">
-            <Image
-              src={"/user_placeholder.jpg"}
-              width={50}
-              height={50}
-              alt={client.name}
-              className="w-12 rounded-full bg-gray-200 dark:bg-gray-700 aspect-square"
-            />
-          </div>
-          <div className="ml-4">
-            <div className="text-sm font-medium text-gray-900 dark:text-white">
-              {client.name}
-            </div>
-            <div className="text-sm text-gray-500 dark:text-gray-400">
-              {client.company}
-            </div>
-          </div>
-        </div>
-      </td>
-      <td className="px-6 py-4 whitespace-nowrap">
-        <div className="text-sm text-gray-900 dark:text-white">
-          {client.phone}
-        </div>
-        <div className="text-sm text-gray-500 dark:text-gray-400">
-          {client.email}
-        </div>
-      </td>
-      <td className="px-6 py-4 whitespace-wrap min-w-md text-sm text-gray-500 dark:text-gray-400">
-        {client.notes}
-      </td>
-      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-        {projectCount} {projectCount === 1 ? "project" : "projects"}
-      </td>
-      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-        {new Date(client.updatedAt).toLocaleDateString()}
-      </td>
-      <td className="px-6 py-4 whitespace-nowrap">
-        <span
-          className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
-            projectCount > 0
-              ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300"
-              : "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300"
-          }`}
-        >
-          {projectCount > 0 ? "Active" : "No projects"}
-        </span>
-      </td>
-      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
         <Link
           href={`/clients/${client.id}`}
-          className="text-emerald-600 hover:text-emerald-800 dark:text-emerald-500 dark:hover:text-emerald-400 mr-3"
+          className="text-sm font-medium text-gray-900 dark:text-gray-100 hover:text-blue-600 transition-colors"
         >
-          View
+          {client.name}
         </Link>
-        <button className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300">
-          <MoreHorizontal className="h-5 w-5 inline" />
-        </button>
+      </td>
+      <td className="px-6 py-4 whitespace-nowrap">
+        <div className="flex items-center">
+          <Mail className="h-4 w-4 mr-2 text-gray-400" />
+          <a
+            href={`mailto:${client.email}`}
+            className="text-sm text-blue-600 hover:text-blue-800"
+          >
+            {client.email}
+          </a>
+        </div>
+      </td>
+      <td className="px-6 py-4 whitespace-nowrap">
+        <div className="flex items-center">
+          <Phone className="h-4 w-4 mr-2 text-gray-400" />
+          <a
+            href={`tel:${client.phone}`}
+            className="text-sm text-blue-600 hover:text-blue-800"
+          >
+            {client.phone}
+          </a>
+        </div>
+      </td>
+
+      <td className="px-6 py-4 whitespace-nowrap">
+        <div className="text-sm text-gray-500">
+          <Calendar className="h-4 w-4 inline mr-1 text-gray-400" />
+          {formatDate(client?.createdAt?.toString() || "")}
+        </div>
+      </td>
+      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+        <div className="flex items-center justify-between space-x-3">
+          <div className="flex space-x-2">
+            {client?.projects?.length > 0 && (
+              <div
+                className="flex items-center"
+                title={`${client.projects.length} projects`}
+              >
+                <FolderClosed
+                  className={`w-3 h-3 ${
+                    activeProjects && activeProjects > 0
+                      ? "text-green-500"
+                      : client?.projects?.length && client?.projects?.length > 0
+                      ? "text-blue-500"
+                      : "text-gray-300"
+                  }`}
+                />
+                <span className="ml-1 text-xs text-gray-500 dark:text-gray-400">
+                  {client.projects.length}
+                </span>
+              </div>
+            )}
+            {client.reminders.length > 0 && (
+              <div
+                className="flex items-center"
+                title={`${client.reminders.length} reminders`}
+              >
+                <Clock
+                  className={`w-3 h-3 ${
+                    upcomingReminders > 0
+                      ? "text-yellow-700"
+                      : client.reminders.length > 0
+                      ? "text-yellow-500"
+                      : "text-gray-300"
+                  } `}
+                ></Clock>
+                <span className="ml-1 text-xs text-gray-500 dark:text-gray-400">
+                  {client.reminders.length}
+                </span>
+              </div>
+            )}
+            {client.logs.length > 0 && (
+              <div
+                className="flex items-center"
+                title={`${client.logs.length} logs`}
+              >
+                <FileText
+                  className={`w-3 h-3  ${
+                    client.logs.length > 0 ? "text-purple-500" : "text-gray-500"
+                  }  mr-1`}
+                />
+                <span className="ml-1 text-xs text-gray-500 dark:text-gray-400">
+                  {client.logs.length}
+                </span>
+              </div>
+            )}
+          </div>
+
+          <Link
+            href={`/clients/${client.id}`}
+            className="text-green-600 hover:text-green-900"
+          >
+            View
+          </Link>
+        </div>
       </td>
     </tr>
   );
