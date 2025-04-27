@@ -1,3 +1,53 @@
+/**
+ * @swagger
+ * /api/clients/{id}:
+ *   get:
+ *     summary: Get client by ID
+ *     description: Retrieves a specific client by ID with their associated projects, reminders, and interaction logs
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The client ID
+ *     responses:
+ *       200:
+ *         description: Client retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                 name:
+ *                   type: string
+ *                 email:
+ *                   type: string
+ *                 phone:
+ *                   type: string
+ *                 company:
+ *                   type: string
+ *                 notes:
+ *                   type: string
+ *                 projects:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Project'
+ *                 reminders:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Reminder'
+ *                 logs:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/InteractionLog'
+ *       404:
+ *         description: Client not found
+ *       500:
+ *         description: Failed to fetch client
+ */
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { withAuth } from '@/lib/middleware/withAuth';
@@ -51,6 +101,54 @@ export async function GET(
   });
 } 
 
+/**
+ * @swagger
+ * /api/clients/{id}:
+ *   put:
+ *     summary: Update client
+ *     description: Updates an existing client's information
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The client ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *                 format: email
+ *               phone:
+ *                 type: string
+ *               company:
+ *                 type: string
+ *               notes:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Client updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                 name:
+ *                   type: string
+ *                 email:
+ *                   type: string
+ *       500:
+ *         description: Failed to update client
+ */
 export async function PUT(
   request: NextRequest,
   { params }: { params: { id: string } }
@@ -84,6 +182,32 @@ export async function PUT(
   });
 }
 
+/**
+ * @swagger
+ * /api/clients/{id}:
+ *   delete:
+ *     summary: Delete client
+ *     description: Deletes a client and all associated projects, reminders, and interaction logs
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The client ID
+ *     responses:
+ *       200:
+ *         description: Client deleted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *       500:
+ *         description: Failed to delete client
+ */
 export async function DELETE(
   request: NextRequest,
   { params }: { params: { id: string } }

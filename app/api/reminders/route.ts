@@ -1,3 +1,79 @@
+/**
+ * @swagger
+ * /api/reminders:
+ *   get:
+ *     summary: Get all reminders
+ *     description: Retrieves all reminders associated with the authenticated user with optional filtering and sorting
+ *     parameters:
+ *       - in: query
+ *         name: search
+ *         schema:
+ *           type: string
+ *         description: Search term to filter reminders by title, client name, project title, or status
+ *       - in: query
+ *         name: startDate
+ *         schema:
+ *           type: string
+ *           format: date
+ *         description: Filter reminders with due date on or after this date
+ *       - in: query
+ *         name: endDate
+ *         schema:
+ *           type: string
+ *           format: date
+ *         description: Filter reminders with due date on or before this date
+ *       - in: query
+ *         name: sortField
+ *         schema:
+ *           type: string
+ *           enum: [title, dueDate, status, client, project]
+ *         description: Field to sort by (defaults to dueDate)
+ *       - in: query
+ *         name: sortOrder
+ *         schema:
+ *           type: string
+ *           enum: [asc, desc]
+ *         description: Sort order (ascending or descending, defaults to asc)
+ *     responses:
+ *       200:
+ *         description: List of reminders retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: string
+ *                   title:
+ *                     type: string
+ *                   notes:
+ *                     type: string
+ *                   dueDate:
+ *                     type: string
+ *                     format: date-time
+ *                   status:
+ *                     type: string
+ *                   client:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                       name:
+ *                         type: string
+ *                       email:
+ *                         type: string
+ *                   project:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                       title:
+ *                         type: string
+ *       500:
+ *         description: Failed to fetch reminders
+ */
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { withAuth } from '@/lib/middleware/withAuth';
@@ -71,6 +147,57 @@ export async function GET(request: NextRequest) {
   });
 }
 
+/**
+ * @swagger
+ * /api/reminders:
+ *   post:
+ *     summary: Create a new reminder
+ *     description: Creates a new reminder associated with the authenticated user, optionally linked to a client and/or project
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - title
+ *               - dueDate
+ *             properties:
+ *               title:
+ *                 type: string
+ *               notes:
+ *                 type: string
+ *               dueDate:
+ *                 type: string
+ *                 format: date-time
+ *               clientId:
+ *                 type: string
+ *               projectId:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Reminder created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                 title:
+ *                   type: string
+ *                 notes:
+ *                   type: string
+ *                 dueDate:
+ *                   type: string
+ *                   format: date-time
+ *                 client:
+ *                   $ref: '#/components/schemas/Client'
+ *                 project:
+ *                   $ref: '#/components/schemas/Project'
+ *       500:
+ *         description: Failed to create reminder
+ */
 export async function POST(request: NextRequest) {
   return withAuth(request, async (user) => {
     try {

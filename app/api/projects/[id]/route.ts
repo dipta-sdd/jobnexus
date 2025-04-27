@@ -1,3 +1,53 @@
+/**
+ * @swagger
+ * /api/projects/{id}:
+ *   get:
+ *     summary: Get project by ID
+ *     description: Retrieves a specific project by ID with associated client, interaction logs, and reminders
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The project ID
+ *     responses:
+ *       200:
+ *         description: Project retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                 title:
+ *                   type: string
+ *                 description:
+ *                   type: string
+ *                 budget:
+ *                   type: number
+ *                 deadline:
+ *                   type: string
+ *                   format: date-time
+ *                 status:
+ *                   type: string
+ *                   enum: [Pending, In Progress, Completed, Cancelled]
+ *                 client:
+ *                   $ref: '#/components/schemas/Client'
+ *                 logs:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/InteractionLog'
+ *                 reminders:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Reminder'
+ *       404:
+ *         description: Project not found
+ *       500:
+ *         description: Failed to fetch project
+ */
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { withAuth } from '@/lib/middleware/withAuth';
@@ -47,6 +97,60 @@ export async function GET(
   });
 } 
 
+/**
+ * @swagger
+ * /api/projects/{id}:
+ *   put:
+ *     summary: Update project
+ *     description: Updates an existing project's information
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The project ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *               startDate:
+ *                 type: string
+ *                 format: date-time
+ *               deadline:
+ *                 type: string
+ *                 format: date-time
+ *               status:
+ *                 type: string
+ *                 enum: [Pending, In Progress, Completed, Cancelled]
+ *               clientId:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Project updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                 title:
+ *                   type: string
+ *                 description:
+ *                   type: string
+ *                 status:
+ *                   type: string
+ *       500:
+ *         description: Failed to update project
+ */
 export async function PUT(
   request: NextRequest,
   { params }: { params: { id: string } }
@@ -95,6 +199,32 @@ export async function PUT(
   });
 }
 
+/**
+ * @swagger
+ * /api/projects/{id}:
+ *   delete:
+ *     summary: Delete project
+ *     description: Deletes a project and all associated interaction logs and reminders
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The project ID
+ *     responses:
+ *       200:
+ *         description: Project deleted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *       500:
+ *         description: Failed to delete project
+ */
 export async function DELETE(
   request: NextRequest,
   { params }: { params: { id: string } }

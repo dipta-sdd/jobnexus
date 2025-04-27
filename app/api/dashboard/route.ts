@@ -1,3 +1,152 @@
+/**
+ * @swagger
+ * /api/dashboard:
+ *   get:
+ *     summary: Get dashboard data
+ *     description: Retrieves comprehensive dashboard statistics and metrics for the authenticated user with optional date filtering
+ *     parameters:
+ *       - in: query
+ *         name: startDate
+ *         schema:
+ *           type: string
+ *           format: date
+ *         description: Filter data from this date onwards
+ *       - in: query
+ *         name: endDate
+ *         schema:
+ *           type: string
+ *           format: date
+ *         description: Filter data up to this date
+ *     responses:
+ *       200:
+ *         description: Dashboard data retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 totalClients:
+ *                   type: integer
+ *                   description: Total number of clients
+ *                 totalProjects:
+ *                   type: integer
+ *                   description: Total number of projects
+ *                 totalLogs:
+ *                   type: integer
+ *                   description: Total number of interaction logs
+ *                 totalReminders:
+ *                   type: integer
+ *                   description: Total number of reminders
+ *                 totalBudget:
+ *                   type: number
+ *                   description: Sum of all project budgets
+ *                 recentClients:
+ *                   type: array
+ *                   description: 5 most recently added clients
+ *                   items:
+ *                     $ref: '#/components/schemas/Client'
+ *                 recentProjects:
+ *                   type: array
+ *                   description: 5 most recently added projects
+ *                   items:
+ *                     $ref: '#/components/schemas/Project'
+ *                 overdueProjects:
+ *                   type: array
+ *                   description: Projects with deadline in the past that are not completed
+ *                   items:
+ *                     $ref: '#/components/schemas/Project'
+ *                 projectsByStatus:
+ *                   type: array
+ *                   description: Count of projects grouped by status
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       status:
+ *                         type: string
+ *                       _count:
+ *                         type: integer
+ *                 topBudgetClients:
+ *                   type: array
+ *                   description: Top 5 clients by total project budget
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                       name:
+ *                         type: string
+ *                       _sum:
+ *                         type: object
+ *                         properties:
+ *                           budget:
+ *                             type: number
+ *                 topCountProjectsClients:
+ *                   type: array
+ *                   description: Top 5 clients by number of projects
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                       name:
+ *                         type: string
+ *                       _count:
+ *                         type: object
+ *                         properties:
+ *                           clientId:
+ *                             type: integer
+ *                 latestProject:
+ *                   type: object
+ *                   description: Most recently added project
+ *                   $ref: '#/components/schemas/Project'
+ *                 recentLogs:
+ *                   type: array
+ *                   description: 5 most recent interaction logs
+ *                   items:
+ *                     $ref: '#/components/schemas/InteractionLog'
+ *                 logsByType:
+ *                   type: array
+ *                   description: Count of interaction logs grouped by type
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       type:
+ *                         type: string
+ *                       _count:
+ *                         type: integer
+ *                 upcomingReminders:
+ *                   type: array
+ *                   description: Pending reminders with due date in the future
+ *                   items:
+ *                     $ref: '#/components/schemas/Reminder'
+ *                 pendingReminders:
+ *                   type: array
+ *                   description: All reminders with status 'Pending'
+ *                   items:
+ *                     $ref: '#/components/schemas/Reminder'
+ *                 overdueReminders:
+ *                   type: array
+ *                   description: Pending reminders with due date in the past
+ *                   items:
+ *                     $ref: '#/components/schemas/Reminder'
+ *                 allReminders:
+ *                   type: array
+ *                   description: All reminders
+ *                   items:
+ *                     $ref: '#/components/schemas/Reminder'
+ *                 dateRange:
+ *                   type: object
+ *                   description: Date range used for filtering
+ *                   properties:
+ *                     startDate:
+ *                       type: string
+ *                       format: date-time
+ *                     endDate:
+ *                       type: string
+ *                       format: date-time
+ *       500:
+ *         description: Server error
+ */
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";

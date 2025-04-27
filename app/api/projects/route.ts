@@ -1,3 +1,83 @@
+/**
+ * @swagger
+ * /api/projects:
+ *   get:
+ *     summary: Get all projects
+ *     description: Retrieves all projects associated with the authenticated user with optional filtering and sorting
+ *     parameters:
+ *       - in: query
+ *         name: search
+ *         schema:
+ *           type: string
+ *         description: Search term to filter projects by title, description, status, or client name
+ *       - in: query
+ *         name: startDate
+ *         schema:
+ *           type: string
+ *           format: date
+ *         description: Filter projects with deadline on or after this date
+ *       - in: query
+ *         name: endDate
+ *         schema:
+ *           type: string
+ *           format: date
+ *         description: Filter projects with deadline on or before this date
+ *       - in: query
+ *         name: sortField
+ *         schema:
+ *           type: string
+ *           enum: [title, description, budget, deadline, status, client]
+ *         description: Field to sort by (defaults to title)
+ *       - in: query
+ *         name: sortOrder
+ *         schema:
+ *           type: string
+ *           enum: [asc, desc]
+ *         description: Sort order (ascending or descending, defaults to asc)
+ *     responses:
+ *       200:
+ *         description: List of projects retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: string
+ *                   title:
+ *                     type: string
+ *                   description:
+ *                     type: string
+ *                   budget:
+ *                     type: number
+ *                   deadline:
+ *                     type: string
+ *                     format: date-time
+ *                   status:
+ *                     type: string
+ *                     enum: [Pending, In Progress, Completed, Cancelled]
+ *                   client:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                       name:
+ *                         type: string
+ *                       email:
+ *                         type: string
+ *                   logs:
+ *                     type: array
+ *                     items:
+ *                       $ref: '#/components/schemas/InteractionLog'
+ *                   reminders:
+ *                     type: array
+ *                     items:
+ *                       $ref: '#/components/schemas/Reminder'
+ *       500:
+ *         description: Failed to fetch projects
+ */
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { withAuth } from '@/lib/middleware/withAuth';
@@ -75,6 +155,69 @@ export async function GET(request: NextRequest) {
   });
 }
 
+/**
+ * @swagger
+ * /api/projects:
+ *   post:
+ *     summary: Create a new project
+ *     description: Creates a new project associated with the authenticated user and a client
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - title
+ *               - description
+ *               - budget
+ *               - deadline
+ *               - status
+ *               - clientId
+ *             properties:
+ *               title:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *               budget:
+ *                 type: number
+ *                 minimum: 0
+ *               deadline:
+ *                 type: string
+ *                 format: date-time
+ *               status:
+ *                 type: string
+ *                 enum: [Pending, In Progress, Completed, Cancelled]
+ *               clientId:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Project created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                 title:
+ *                   type: string
+ *                 description:
+ *                   type: string
+ *                 budget:
+ *                   type: number
+ *                 deadline:
+ *                   type: string
+ *                   format: date-time
+ *                 status:
+ *                   type: string
+ *                 clientId:
+ *                   type: string
+ *       400:
+ *         description: Invalid input data
+ *       500:
+ *         description: Failed to create project
+ */
 export async function POST(request: NextRequest) {
   return withAuth(request, async (user:User) => {
     try {
