@@ -29,6 +29,10 @@ const NAV_OPTIONS = [
     label: "Reminders",
     href: "/reminders",
   },
+  {
+    label: "Api Docs",
+    href: "/api-doc",
+  },
 ];
 
 export default function Navbar() {

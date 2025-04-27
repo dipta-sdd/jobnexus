@@ -26,6 +26,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const token = document.cookie.split('; ').find(row => row.startsWith('token='))?.split('=')[1];
+    console.log(token);
     if (token) {
       fetchUserData();
     } else {
@@ -35,6 +36,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
 
   const fetchUserData = async () => {
     try {
+      
       const response = await api.get('/auth/me');
       setUser(response.data);
     } catch (error) {

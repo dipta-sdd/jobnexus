@@ -1,3 +1,9 @@
+
+import { NextRequest, NextResponse } from 'next/server';
+import prisma from '@/lib/prisma';
+import { withAuth } from '@/lib/middleware/withAuth';
+
+
 /**
  * @swagger
  * /api/projects/{id}:
@@ -48,10 +54,6 @@
  *       500:
  *         description: Failed to fetch project
  */
-import { NextRequest, NextResponse } from 'next/server';
-import prisma from '@/lib/prisma';
-import { withAuth } from '@/lib/middleware/withAuth';
-
 export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }

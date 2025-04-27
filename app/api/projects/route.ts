@@ -1,3 +1,22 @@
+
+import { NextRequest, NextResponse } from 'next/server';
+import prisma from '@/lib/prisma';
+import { withAuth } from '@/lib/middleware/withAuth';
+import { z } from 'zod';
+import { Prisma } from '@/lib/generated/prisma';
+import { User } from '@/lib/types';
+
+const projectSchema = z.object({
+  title: z.string().min(1),
+  description: z.string().min(1),
+  budget: z.number().min(0),
+  startDate: z.string().datetime(),
+  deadline: z.string().datetime(),
+  status: z.enum(['Pending', 'In Progress', 'Completed', 'Cancelled']),
+  clientId: z.string().min(1),
+});
+
+
 /**
  * @swagger
  * /api/projects:
@@ -78,22 +97,6 @@
  *       500:
  *         description: Failed to fetch projects
  */
-import { NextRequest, NextResponse } from 'next/server';
-import prisma from '@/lib/prisma';
-import { withAuth } from '@/lib/middleware/withAuth';
-import { z } from 'zod';
-import { Prisma } from '@/lib/generated/prisma';
-import { User } from '@/lib/types';
-
-const projectSchema = z.object({
-  title: z.string().min(1),
-  description: z.string().min(1),
-  budget: z.number().min(0),
-  deadline: z.string().datetime(),
-  status: z.enum(['Pending', 'In Progress', 'Completed', 'Cancelled']),
-  clientId: z.string().min(1),
-});
-
 export async function GET(request: NextRequest) {
   return withAuth(request, async (user:User) => {
     try {
@@ -223,12 +226,16 @@ export async function POST(request: NextRequest) {
     try {
       const body = await request.json();
       const validatedData = projectSchema.parse(body);
+      if (new Date(validatedData.startDate) > new Date(validatedData.deadline)) {
+        return NextResponse.json({ error: 'Start date must be smaller than or equal to deadline' }, { status: 400 });
+      }
 
       const project = await prisma.project.create({
         data: {
           title: validatedData.title,
           description: validatedData.description,
           budget: validatedData.budget,
+          startDate: new Date(validatedData.startDate),
           deadline: new Date(validatedData.deadline),
           status: validatedData.status,
           clientId: validatedData.clientId,

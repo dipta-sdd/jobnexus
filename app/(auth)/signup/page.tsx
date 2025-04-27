@@ -32,6 +32,7 @@ type SignupFormData = z.infer<typeof signupSchema>;
 export default function SignupPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
   const { setUser } = useUser();
   const {
@@ -60,9 +61,15 @@ export default function SignupPage() {
       setUser(user);
 
       toast.success("Account created successfully");
+      setError(null);
       router.push("/dashboard");
     } catch (error: any) {
-      toast.error(error.response?.data?.message || "Error creating account");
+      if (error.response?.status === 400) {
+        setError(error.response?.data?.error || "Error creating account");
+        console.log(error.response?.data);
+      } else {
+        toast.error(error.response?.data?.message || "Error creating account");
+      }
     } finally {
       setIsLoading(false);
     }
@@ -148,6 +155,9 @@ export default function SignupPage() {
               </div>
               {errors.email && (
                 <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
+              )}
+              {error && (
+                <p className="mt-1 text-sm text-red-600">{error}</p>
               )}
             </div>
 

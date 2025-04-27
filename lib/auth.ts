@@ -8,7 +8,7 @@ import { User } from './types';
 
 
 const prismaClient = new PrismaClient();
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
+const JWT_SECRET = process.env.JWT_SECRET || 'secret-key';
 const COOKIE_NAME = 'token';
 
 export async function hashPassword(password: string) {
