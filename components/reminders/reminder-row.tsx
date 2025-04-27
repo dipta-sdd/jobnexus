@@ -1,7 +1,7 @@
 'use client';
 
 import { Reminder } from '@/lib/types';
-import {  User, FolderCheck, Trash2, Calendar } from 'lucide-react';
+import {  User, FileText, Trash2, Calendar } from 'lucide-react';
 import { Edit } from 'lucide-react';
 import Link from 'next/link';
 import { Description } from '@/components/ui/Description';
@@ -75,7 +75,7 @@ export default function ReminderRow({ reminder, onEdit, onDelete }: ReminderRowP
               href={`/projects/${reminder.project.id}`}
               className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-100"
             >
-              <FolderCheck className="h-3 w-3 mr-1" /> {reminder.project.title}
+              <FileText className="h-3 w-3 mr-1" /> {reminder.project.title}
             </Link>
           )}
         </div>

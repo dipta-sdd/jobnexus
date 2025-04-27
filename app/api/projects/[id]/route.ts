@@ -2,8 +2,18 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { withAuth } from '@/lib/middleware/withAuth';
+import { z } from 'zod';
 
 
+const projectSchema = z.object({
+  title: z.string().min(1),
+  description: z.string().min(1),
+  budget: z.number().min(0),
+  startDate: z.string().datetime(),
+  deadline: z.string().datetime(),
+  status: z.enum(['Pending', 'In Progress', 'Completed', 'Cancelled']),
+  clientId: z.string().min(1),
+});
 /**
  * @swagger
  * /api/projects/{id}:
@@ -160,7 +170,7 @@ export async function PUT(
   return withAuth(request, async (user) => {
     try {
       const body = await request.json();
-      const { title, description, startDate, deadline, status, clientId } = body;
+      const parsedData = projectSchema.parse(body);
       const { id } = await params;
       const project = await prisma.project.update({
         where: {
@@ -168,12 +178,9 @@ export async function PUT(
           userId: user.id,
         },
         data: {
-          title,
-          description,
-          startDate: startDate ? new Date(startDate) : undefined,
-          deadline: deadline ? new Date(deadline) : undefined,
-          status,
-          clientId,
+          ...parsedData,
+          startDate: parsedData.startDate ? new Date(parsedData.startDate) : undefined,
+          deadline: parsedData.deadline ? new Date(parsedData.deadline) : undefined,
         },
         include: {
           client: true,

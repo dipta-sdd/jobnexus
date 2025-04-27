@@ -1,5 +1,5 @@
 import { InteractionLog } from '@/lib/types';
-import { Edit, FileText, FolderCheck, Trash2, User } from 'lucide-react';
+import { Edit, FileText, Trash2, User } from 'lucide-react';
 import { Mail } from 'lucide-react';
 import { Phone, Users } from 'lucide-react';
 import Link from 'next/link';
@@ -61,7 +61,7 @@ export default function InteractionLogCard({ log,  onEdit, onDelete }: Interacti
                 href={`/projects/${log.project.id}`}
                 className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-100"
               >
-                <FolderCheck className="h-3 w-3 mr-1" /> {log.project.title}
+                <FileText className="h-3 w-3 mr-1" /> {log.project.title}
               </Link>
             )}
           </div>

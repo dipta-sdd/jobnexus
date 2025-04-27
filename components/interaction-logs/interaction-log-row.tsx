@@ -1,5 +1,5 @@
 import { InteractionLog } from '@/lib/types';
-import { Edit, FileText, Mail, Phone, Users, FolderCheck, User, Trash2, Calendar } from 'lucide-react';
+import { Edit, Mail, Phone, Users, FileText, User, Trash2, Calendar } from 'lucide-react';
 import Link from 'next/link';
 import { Description } from '../ui/Description';
 import formatDateTime from '@/lib/utils/date';
@@ -59,7 +59,7 @@ export default function InteractionLogRow({ log, onEdit, onDelete }: Interaction
             href={`/projects/${log.project.id}`}
             className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-100"
           >
-            <FolderCheck className="h-3 w-3 mr-1" /> {log.project.title}
+            <FileText className="h-3 w-3 mr-1" /> {log.project.title}
           </Link>
         )}
       </td>

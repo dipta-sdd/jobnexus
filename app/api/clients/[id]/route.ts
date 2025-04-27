@@ -1,3 +1,8 @@
+
+import { NextRequest, NextResponse } from 'next/server';
+import prisma from '@/lib/prisma';
+import { withAuth } from '@/lib/middleware/withAuth';
+import { User } from '@/lib/types';
 /**
  * @swagger
  * /api/clients/{id}:
@@ -48,11 +53,6 @@
  *       500:
  *         description: Failed to fetch client
  */
-import { NextRequest, NextResponse } from 'next/server';
-import prisma from '@/lib/prisma';
-import { withAuth } from '@/lib/middleware/withAuth';
-import { User } from '@/lib/types';
-
 export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }

@@ -638,7 +638,7 @@ export default function ClientPage() {
           <div className="bg-white dark:bg-gray-800 rounded-xs shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
             <div className="px-6 py-5 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
               <h2 className="text-lg font-medium text-gray-900 dark:text-white">
-                Activity Logs
+                Interaction Logs
               </h2>
             </div>
             <div className="p-6">
@@ -663,7 +663,7 @@ export default function ClientPage() {
                               <div>
                                 <div className="relative px-1">
                                   <div
-                                    className={`h-8 w-8 rounded-full flex items-center justify-center ring-8 ring-white dark:ring-gray-800 bg-purple-100 dark:bg-purple-300`}
+                                    className={`h-8 w-8 rounded-full flex items-center justify-center ring-8 ring-white dark:ring-gray-800 bg-gray-100 dark:bg-gray-700`}
                                   >
                                     {getLogIcon(log.type)}
                                   </div>

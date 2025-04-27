@@ -1,3 +1,12 @@
+
+import { NextRequest, NextResponse } from "next/server";
+
+import prisma from "@/lib/prisma";
+
+import { User } from "@/lib/types";
+import { withAuth } from "@/lib/middleware/withAuth";
+
+
 /**
  * @swagger
  * /api/dashboard:
@@ -147,13 +156,6 @@
  *       500:
  *         description: Server error
  */
-import { NextRequest, NextResponse } from "next/server";
-
-import prisma from "@/lib/prisma";
-
-import { User } from "@/lib/types";
-import { withAuth } from "@/lib/middleware/withAuth";
-
 export async function GET(request: NextRequest) {
   return withAuth(request, async (user: User) => {
     try {

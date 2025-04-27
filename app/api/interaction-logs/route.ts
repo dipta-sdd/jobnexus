@@ -1,3 +1,19 @@
+
+import { NextRequest, NextResponse } from 'next/server';
+import prisma from '@/lib/prisma';
+import { withAuth } from '@/lib/middleware/withAuth';
+import { z } from 'zod';
+import { Prisma } from '@/lib/generated/prisma';
+import { User } from '@/lib/types';
+
+const interactionLogSchema = z.object({
+  type: z.enum(['call', 'meeting', 'email', 'message', 'other']),
+  notes: z.string().min(1),
+  clientId: z.string().optional(),
+  projectId: z.string().optional(),
+});
+
+
 /**
  * @swagger
  * /api/interaction-logs:
@@ -73,20 +89,6 @@
  *       500:
  *         description: Failed to fetch interaction logs
  */
-import { NextRequest, NextResponse } from 'next/server';
-import prisma from '@/lib/prisma';
-import { withAuth } from '@/lib/middleware/withAuth';
-import { z } from 'zod';
-import { Prisma } from '@/lib/generated/prisma';
-import { User } from '@/lib/types';
-
-const interactionLogSchema = z.object({
-  type: z.enum(['call', 'meeting', 'email']),
-  notes: z.string().min(1),
-  clientId: z.string().optional(),
-  projectId: z.string().optional(),
-});
-
 export async function GET(request: NextRequest) {
   return withAuth(request, async (user:User) => {
     try {

@@ -1,3 +1,8 @@
+
+import { NextResponse } from 'next/server';
+import { removeAuthCookie } from '@/lib/auth';
+
+
 /**
  * @swagger
  * /api/auth/logout:
@@ -24,9 +29,6 @@
  *                 error:
  *                   type: string
  */
-import { NextResponse } from 'next/server';
-import { removeAuthCookie } from '@/lib/auth';
-
 export async function POST() {
   try {
     removeAuthCookie();

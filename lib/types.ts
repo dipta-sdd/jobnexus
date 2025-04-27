@@ -41,7 +41,7 @@ export interface Project {
 
 export interface InteractionLog {
   id: string;
-  type: string; // "call", "meeting", "email"
+  type: string;
   notes: string;
   date: Date;
   clientId?: string | null;

@@ -1,3 +1,11 @@
+
+import { NextRequest, NextResponse } from "next/server";
+import { cookiesToUser } from "@/lib/auth";
+import { User } from "@/lib/types";
+import { withAuth } from "@/lib/middleware/withAuth";
+import { Prisma } from "@/lib/generated/prisma";
+import prisma from "@/lib/prisma";
+
 /**
  * @swagger
  * /api/clients:
@@ -44,12 +52,6 @@
  *       500:
  *         description: Internal Server Error
  */
-import { NextRequest, NextResponse } from "next/server";
-import { cookiesToUser } from "@/lib/auth";
-import { User } from "@/lib/types";
-import { withAuth } from "@/lib/middleware/withAuth";
-import { Prisma } from "@/lib/generated/prisma";
-import prisma from "@/lib/prisma";
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();

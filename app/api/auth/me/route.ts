@@ -1,3 +1,9 @@
+import { NextRequest, NextResponse } from "next/server";
+import { verifyToken } from "@/lib/auth";
+import { PrismaClient } from "@/lib/generated/prisma";
+
+const prisma = new PrismaClient();
+
 /**
  * @swagger
  * /api/auth/me:
@@ -44,31 +50,19 @@
  *       500:
  *         description: Internal server error
  */
-import { NextRequest, NextResponse } from 'next/server';
-import { verifyToken } from '@/lib/auth';
-import { PrismaClient } from '@/lib/generated/prisma';
-
-const prisma = new PrismaClient();
-
 export async function GET(request: NextRequest) {
   try {
-    // Get the token from cookies
-    const token = request.cookies.get('token')?.value;
+    const authorization = request.headers.get("authorization");
+    const token = authorization && authorization.split(" ").pop();
 
     if (!token) {
-      return NextResponse.json(
-        { message: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
     // Verify the token
     const decoded = await verifyToken(token);
     if (!decoded || !decoded.userId) {
-      return NextResponse.json(
-        { message: 'Invalid token' },
-        { status: 401 }
-      );
+      return NextResponse.json({ message: "Invalid token" }, { status: 401 });
     }
 
     // Fetch user from database
@@ -83,18 +77,15 @@ export async function GET(request: NextRequest) {
     });
 
     if (!user) {
-      return NextResponse.json(
-        { message: 'User not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ message: "User not found" }, { status: 404 });
     }
 
     return NextResponse.json(user);
   } catch (error) {
-    console.error('Error in /api/auth/me:', error);
+    console.error("Error in /api/auth/me:", error);
     return NextResponse.json(
-      { message: 'Internal server error' },
+      { message: "Internal server error" },
       { status: 500 }
     );
   }
-} 
+}

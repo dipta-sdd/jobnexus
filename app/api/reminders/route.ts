@@ -1,3 +1,21 @@
+
+import { NextRequest, NextResponse } from 'next/server';
+import prisma from '@/lib/prisma';
+import { withAuth } from '@/lib/middleware/withAuth';
+import { Prisma } from '@/lib/generated/prisma';
+import { User } from '@/lib/types';
+import { z } from 'zod';
+
+
+const reminderSchema = z.object({
+  title: z.string().min(1),
+  notes: z.string().min(1).optional(),
+  dueDate: z.string().datetime(),
+  status: z.enum(['Pending', 'Completed','Cancelled']),
+  clientId: z.string(),
+  projectId: z.string().optional(),
+});
+
 /**
  * @swagger
  * /api/reminders:
@@ -74,12 +92,6 @@
  *       500:
  *         description: Failed to fetch reminders
  */
-import { NextRequest, NextResponse } from 'next/server';
-import prisma from '@/lib/prisma';
-import { withAuth } from '@/lib/middleware/withAuth';
-import { Prisma } from '@/lib/generated/prisma';
-import { User } from '@/lib/types';
-
 export async function GET(request: NextRequest) {
   return withAuth(request, async (user:User) => {
     try {
@@ -202,15 +214,16 @@ export async function POST(request: NextRequest) {
   return withAuth(request, async (user) => {
     try {
       const body = await request.json();
-      const { title, notes, dueDate, clientId, projectId } = body;
+      const parseData = reminderSchema.parse(body);
 
       const reminder = await prisma.reminder.create({
         data: {
-          title,
-          notes,
-          dueDate: new Date(dueDate),
-          clientId,
-          projectId,
+          title: parseData.title,
+          notes: parseData.notes,
+          dueDate: new Date(parseData.dueDate),
+          status: parseData.status,
+          clientId: parseData.clientId,
+          projectId: parseData.projectId || null,
           userId: user.id,
         },
         include: {
