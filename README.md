@@ -19,7 +19,7 @@
 
 ## Prerequisites
 
-- Node.js 20.x or higher
+- Node.js 22.x or higher
 - PostgreSQL database
 - npm or yarn package manager
 
