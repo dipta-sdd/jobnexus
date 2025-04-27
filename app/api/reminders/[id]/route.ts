@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { withAuth } from '@/lib/middleware/withAuth';
-
+import { User } from '@/lib/types';
 export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
-  return withAuth(request, async (user) => {
+  return withAuth(request, async (user:User) => {
     try {
       const reminder = await prisma.reminder.findUnique({
         where: {
@@ -41,14 +41,15 @@ export async function PUT(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
-  return withAuth(request, async (user) => {
+  return withAuth(request, async (user:User) => {
     try {
       const body = await request.json();
+      const { id } = await params;
       const { title, notes, dueDate, status, clientId, projectId } = body;
 
       const reminder = await prisma.reminder.update({
         where: {
-          id: params.id,
+          id: id,
           userId: user.id,
         },
         data: {
@@ -57,7 +58,7 @@ export async function PUT(
           dueDate: dueDate ? new Date(dueDate) : undefined,
           status,
           clientId,
-          projectId,
+          projectId: projectId || null,
         },
         include: {
           client: true,
@@ -80,7 +81,7 @@ export async function DELETE(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
-  return withAuth(request, async (user) => {
+  return withAuth(request, async (user:User) => {
     try {
       const {id } = await params;
       await prisma.reminder.delete({
@@ -99,4 +100,4 @@ export async function DELETE(
       );
     }
   });
-} 
+}  

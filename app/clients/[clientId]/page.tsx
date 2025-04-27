@@ -14,8 +14,9 @@ import {
   PhoneCall,
   Video,
   FileEdit,
-  Folder,
   FolderClosed,
+  Edit,
+  Trash2,
 } from "lucide-react";
 import Link from "next/link";
 import type { Client, Project, InteractionLog, Reminder } from "@/lib/types";
@@ -30,10 +31,13 @@ import AddReminder from "@/components/reminders/add-reminder";
 import { toast } from "react-hot-toast";
 import { Description } from "@/components/ui/Description";
 import { filterReminders } from "@/lib/utils/reminder-filters";
+import ClientCardLoader from "@/components/loaders/client-card-loader";
+
 
 export default function ClientPage() {
   const { clientId } = useParams();
   const [client, setClient] = useState<Client | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isAddProjectModalOpen, setIsAddProjectModalOpen] = useState(false);
   const [isAddLogModalOpen, setIsAddLogModalOpen] = useState(false);
@@ -43,10 +47,10 @@ export default function ClientPage() {
   const [editReminder, setEditReminder] = useState<Reminder | null>(null);
   const [editLog, setEditLog] = useState<InteractionLog | null>(null);
   const [reminderFilter, setReminderFilter] = useState<string>("upcoming7days");
-  const [reminderStatusFilter, setReminderStatusFilter] =
-    useState<string>("due");
+  const [reminderStatusFilter, setReminderStatusFilter] =  useState<string>("due");
   const [sortedReminders, setSortedReminders] = useState<Reminder[]>([]);
 
+  const router = useRouter();
   useEffect(() => {
     fetchClient();
   }, [clientId]);
@@ -65,14 +69,24 @@ export default function ClientPage() {
 
   const fetchClient = async () => {
     try {
+      setIsLoading(true);
       const response = await api.get(`/clients/${clientId}`);
       setClient(response.data);
+      setIsLoading(false);
     } catch (error) {
       console.error("Error fetching client:", error);
+      
+      if (error.response?.status === 404) {
+        router.push('/clients');
+        toast.error('Client not found');
+        return;
+      }
+      toast.error("Error fetching client");
+      setIsLoading(false);
     }
   };
 
-  if (!client) return <div>Loading...</div>;
+
 
   const formatDate = (dateString: string | Date) => {
     if (!dateString) return "N/A";
@@ -138,39 +152,43 @@ export default function ClientPage() {
 
   // Calculate client statistics
   const stats = {
-    totalProjects: client.projects?.length || 0,
+    totalProjects: client?.projects?.length || 0,
     activeProjects:
-      client.projects?.filter((project) => project.status !== "Completed")
+      client?.projects?.filter((project) => project.status !== "Completed")
         .length || 0,
     completedProjects:
-      client.projects?.filter((project) => project.status === "Completed")
+      client?.projects?.filter((project) => project.status === "Completed")
         .length || 0,
     totalBudget:
-      client.projects?.reduce((sum, project) => sum + project.budget, 0) || 0,
+      client?.projects?.reduce((sum, project) => sum + project.budget, 0) || 0,
     pendingReminders:
-      client.reminders?.filter((reminder) => reminder.status === "Pending")
+      client?.reminders?.filter((reminder) => reminder.status === "Pending")
         .length || 0,
-    totalReminders: client.reminders?.length || 0,
-    totalLogs: client.logs?.length || 0,
+    totalReminders: client?.reminders?.length || 0,
+    totalLogs: client?.logs?.length || 0,
   };
 
   // Sort projects by deadline (most recent first)
-  const sortedProjects = [...(client.projects || [])].sort(
+  const sortedProjects = [...(client?.projects || [])].sort(
     (a, b) => new Date(a.deadline).getTime() - new Date(b.deadline).getTime()
   );
 
 
-  const sortedLogs = [...(client.logs || [])].sort(
+  const sortedLogs = [...(client?.logs || [])].sort(
     (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
   );
 
   const handleDeleteLog = async (id: string) => {
     try {
       await api.delete("/interaction-logs/" + id);
-      const logs = client.logs?.filter((log) => {
-        return log.id !== id;
+      const logs = (client?.logs || []).filter((log: InteractionLog) => log.id !== id);
+      setClient((prevClient) => {
+        if (!prevClient) return null;
+        return {
+          ...prevClient,
+          logs: logs || [],
+        };
       });
-      setClient({ ...client, logs: logs });
       toast.success("Log deleted successfully");
     } catch (error) {
       console.error("Error deleting log:", error);
@@ -181,10 +199,16 @@ export default function ClientPage() {
   const handleDeleteReminder = async (id: string) => {
     try {
       await api.delete("/reminders/" + id);
-      const reminders = client.reminders.filter((reminder) => {
+      const reminders = client?.reminders?.filter((reminder) => {
         return reminder.id !== id;
       });
-      setClient({ ...client, reminders: reminders });
+      setClient((prevClient) => {
+        if (!prevClient) return null;
+        return {
+          ...prevClient,
+          reminders: reminders || [],
+        };
+      });
       toast.success("Reminder deleted successfully");
     } catch (error) {
       console.error("Error deleting reminder:", error);
@@ -192,17 +216,29 @@ export default function ClientPage() {
     }
   };
 
+  const handleDeleteClient = async () => {
+    try {
+      await api.delete(`/clients/${client?.id}`);
+      toast.success('Client deleted successfully');
+      router.push('/clients');
+    } catch (error) {
+      console.error('Error deleting client:', error);
+      toast.error('Failed to delete client');
+    }
+  };
+
+  if (isLoading) return <ClientCardLoader />;
   return (
     <div className=" mx-auto dark:bg-gray-900 mt-4">
       {/* Client Header */}
       <div className="">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between">
+        <div className="flex flex-row items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-              {client.name}
+              {client?.name}
             </h1>
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              Client since {formatDate(client.createdAt.toString())}
+              Client ID: {client?.id}
             </p>
           </div>
           <div className=" flex space-x-3">
@@ -210,7 +246,15 @@ export default function ClientPage() {
               onClick={() => setIsModalOpen(true)}
               className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors"
             >
-              Edit Client
+              <Edit className="h-4 w-4 mr-2 sm:hidden" />
+              <span className="hidden sm:inline">Edit Client</span>
+            </button>
+            <button
+              onClick={handleDeleteClient}
+              className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
+            >
+              <Trash2 className="h-4 w-4 mr-2 sm:hidden" />
+              <span className="hidden sm:inline">Delete Client</span>
             </button>
           </div>
         </div>
@@ -236,10 +280,10 @@ export default function ClientPage() {
                   </dt>
                   <dd className="mt-1 text-sm text-gray-900 dark:text-gray-100">
                     <a
-                      href={`mailto:${client.email}`}
+                      href={`mailto:${client?.email}`}
                       className="text-blue-600 dark:text-blue-400 hover:text-blue-500"
                     >
-                      {client.email}
+                      {client?.email}
                     </a>
                   </dd>
                 </div>
@@ -250,10 +294,10 @@ export default function ClientPage() {
                   </dt>
                   <dd className="mt-1 text-sm text-gray-900 dark:text-gray-100">
                     <a
-                      href={`tel:${client.phone}`}
+                      href={`tel:${client?.phone}`}
                       className="text-blue-600 dark:text-blue-400 hover:text-blue-500"
                     >
-                      {client.phone}
+                      {client?.phone}
                     </a>
                   </dd>
                 </div>
@@ -263,7 +307,7 @@ export default function ClientPage() {
                     Company
                   </dt>
                   <dd className="mt-1 text-sm text-gray-900 dark:text-gray-100">
-                    {client.company || "Not specified"}
+                    {client?.company || "Not specified"}
                   </dd>
                 </div>
                 <div>
@@ -272,17 +316,17 @@ export default function ClientPage() {
                     Last Updated
                   </dt>
                   <dd className="mt-1 text-sm text-gray-900 dark:text-gray-100">
-                    {getTimeAgo(client.updatedAt)}
+                    {getTimeAgo(client?.updatedAt?.toString() || "")}
                   </dd>
                 </div>
-                {client.notes && (
+                {client?.notes && (
                   <div className="sm:col-span-2">
                     <dt className="text-sm font-medium text-gray-500 dark:text-gray-400 flex items-center">
                       <FileText className="h-4 w-4 mr-1 text-gray-400 dark:text-gray-500" />
                       Notes
                     </dt>
                     <dd className="mt-1 text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-700 p-3 rounded-md">
-                      {client.notes}
+                      {client?.notes}
                     </dd>
                   </div>
                 )}
@@ -298,7 +342,7 @@ export default function ClientPage() {
                 Projects
               </h2>
               <span className="text-sm text-gray-500 dark:text-gray-400">
-                {client.projects.length} projects
+                {client?.projects?.length} projects
               </span>
             </div>
             <div>
@@ -361,7 +405,7 @@ export default function ClientPage() {
             </div>
             <div className="px-6 py-4 bg-gray-50 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
               <Link
-                href={`/projects/new?clientId=${client.id}`}
+                href={`/projects/new?clientId=${client?.id}`}
                 className="text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300"
               >
                 + Add new project
@@ -425,7 +469,7 @@ export default function ClientPage() {
                       new Date() < new Date(reminder.dueDate) &&
                       reminder.status !== "Completed";
 
-                    const project = (client.projects || []).find(
+                    const project = (client?.projects || []).find(
                       (p) => p.id === reminder.projectId
                     );
 
@@ -602,7 +646,7 @@ export default function ClientPage() {
                 <div className="flow-root">
                   <ul className="-mb-8">
                     {sortedLogs.map((log, logIdx) => {
-                      const project = (client.projects || []).find(
+                      const project = (client?.projects || []).find(
                         (p) => p.id === log.projectId
                       );
 
@@ -725,9 +769,6 @@ export default function ClientPage() {
               >
                 Add Reminder
               </button>
-              <button className="w-full flex items-center justify-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                Export Client Data
-              </button>
             </div>
           </div>
         </div>
@@ -741,7 +782,7 @@ export default function ClientPage() {
         title="Add New Client"
       >
         <AddClient
-          client={client}
+            client={client}
           onClose={() => {
             setIsModalOpen(false);
           }}
@@ -760,15 +801,18 @@ export default function ClientPage() {
         title="Add New Project"
       >
         <AddProject
-          clients={[{ ...client }]}
-          clientId={client.id}
+          clients={client ? [client] : []}
+          clientId={client?.id}
           onClose={() => {
             setIsAddProjectModalOpen(false);
           }}
           onUpdate={(data: Project) => {
-            setClient({
-              ...client,
-              projects: [...(client.projects || []), data],
+            setClient((prevClient) => {
+              if (!prevClient) return null;
+              return {
+                ...prevClient,
+                projects: [...(prevClient.projects || []), data],
+              };
             });
             setIsAddProjectModalOpen(false);
           }}
@@ -783,17 +827,20 @@ export default function ClientPage() {
         title="Add Activity Log"
       >
         <AddInteractionLog
-          clients={[client]}
+          clients={client ? [client] : []}
+          clientId={client?.id}
           onClose={(data?: InteractionLog) => {
             if (data) {
-              setClient({
-                ...client,
-                logs: [...(client.logs || []), data],
+              setClient((prevClient) => {
+                if (!prevClient) return null;
+                return {
+                  ...prevClient,
+                  logs: [...(prevClient.logs || []), data],
+                };
               });
             }
             setIsAddLogModalOpen(false);
           }}
-          clientId={client.id}
           onUpdate={(data: InteractionLog) => {}}
         />
       </Modal>
@@ -806,17 +853,21 @@ export default function ClientPage() {
         title="Edit Activity Log"
       >
         <AddInteractionLog
-          clients={[client]}
+          clients={client ? [client] : []}
+          clientId={client?.id}
           onClose={() => {
             setIsEditLogModalOpen(false);
           }}
           log={editLog}
           onUpdate={(data: InteractionLog) => {
-            setClient({
-              ...client,
-              logs: client.logs?.map((log) =>
-                log.id === editLog?.id ? data : log
-              ),
+            setClient((prevClient) => {
+              if (!prevClient) return null;
+              return {
+                ...prevClient,
+                logs: (prevClient.logs || []).map((log) =>
+                  log.id === editLog?.id ? data : log
+                ),
+              };
             });
             setIsEditLogModalOpen(false);
           }}
@@ -831,13 +882,16 @@ export default function ClientPage() {
         title="Add Reminder"
       >
         <AddReminder
-          clients={[{ ...client }]}
-          clientId={client.id}
+          clients={client ? [client] : []}
+          clientId={client?.id}
           onClose={(data?: Reminder) => {
             if (data) {
-              setClient({
-                ...client,
-                reminders: [...(client.reminders || []), data],
+              setClient((prevClient) => {
+                if (!prevClient) return null;
+                return {
+                  ...prevClient,
+                  reminders: [...(prevClient.reminders || []), data],
+                };
               });
             }
             setIsAddReminderModalOpen(false);
@@ -854,18 +908,21 @@ export default function ClientPage() {
         title="Edit Reminder"
       >
         <AddReminder
-          clients={[{ ...client }]}
-          clientId={client.id}
+          clients={client ? [client] : []}
+          clientId={client?.id}
           onClose={() => {
             setIsAddReminderModalOpen(false);
           }}
           reminder={editReminder}
           onUpdate={(data: Reminder) => {
-            setClient({
-              ...client,
-              reminders: client.reminders?.map((reminder) =>
+            setClient((prevClient) => {
+              if (!prevClient) return null;
+              return {
+                ...prevClient,
+                reminders: (prevClient.reminders || []).map((reminder) =>
                 reminder.id === editReminder?.id ? data : reminder
-              ),
+                ),
+              };
             });
             setIsEditReminderModalOpen(false);
           }}

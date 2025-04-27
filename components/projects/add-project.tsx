@@ -22,7 +22,7 @@ type ProjectFormData = z.infer<typeof projectSchema>;
 interface AddProjectProps {
   clients: Client[];
   onClose: () => void;
-  project?: Project;
+  project?: Project | null;
   clientId?: string;
   onUpdate: (data: Project) => void;
 }
@@ -78,7 +78,6 @@ export default function AddProject({
         toast.success('Project created successfully');
         onClose();
         reset();
-        onUpdate(response.data);
       }
     } catch (error) {
       toast.error(project ? 'Failed to update project' : 'Failed to create project');

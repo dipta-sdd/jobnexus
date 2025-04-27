@@ -7,7 +7,7 @@ export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
-  return withAuth(request, async (user) => {
+  return withAuth(request, async (user:User ) => {
     try {
       const { id } = await params;
       const log = await prisma.interactionLog.findUnique({
@@ -71,7 +71,7 @@ export async function DELETE(
       const { id } = await params;
       const log = await prisma.interactionLog.delete({
         where: {
-          id: id,
+          id: id, 
           userId: user.id,
         }
       });

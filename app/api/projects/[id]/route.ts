@@ -25,7 +25,7 @@ export async function GET(
             orderBy: {
               dueDate: 'desc',
             },
-          },
+          }, 
         },
       });
 
@@ -102,6 +102,20 @@ export async function DELETE(
   return withAuth(request, async (user) => {
     try {
       const { id } = params;
+      // Delete all associated records first
+      await prisma.interactionLog.deleteMany({
+        where: {
+          projectId: id,
+          userId: user.id,
+        },
+      });
+
+      await prisma.reminder.deleteMany({
+        where: {
+          projectId: id,
+          userId: user.id,
+        },
+      });
       await prisma.project.delete({
         where: {
           id: id,

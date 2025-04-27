@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { withAuth } from '@/lib/middleware/withAuth';
 import { z } from 'zod';
+import { Prisma } from '@/lib/generated/prisma';
+import { User } from '@/lib/types';
 
 const interactionLogSchema = z.object({
   type: z.enum(['call', 'meeting', 'email']),
@@ -11,78 +13,66 @@ const interactionLogSchema = z.object({
 });
 
 export async function GET(request: NextRequest) {
-  return withAuth(request, async (user) => {
+  return withAuth(request, async (user:User) => {
     try {
       const { searchParams } = new URL(request.url);
-      
-      // Get filter parameters
-      const type = searchParams.get('type');
-      const clientId = searchParams.get('clientId');
-      const projectId = searchParams.get('projectId');
-      const searchQuery = searchParams.get('search');
-      
-      // Get sort parameters
-      const sortField = searchParams.get('sortField') || 'date';
-      const sortOrder = searchParams.get('sortOrder') || 'desc';
+      const search = searchParams.get("search") || "";
+      const startDate = searchParams.get("startDate");
+      const endDate = searchParams.get("endDate");
+      const sortField = searchParams.get("sortField") || "date";
+      const sortOrder = searchParams.get("sortOrder") || "desc";
 
-      // Build where clause for filters
-      const where: any = {
+      const where: Prisma.InteractionLogWhereInput = {
         userId: user.id,
+        OR: [
+          { type: { contains: search, mode: "insensitive" } },
+          { notes: { contains: search, mode: "insensitive" } },
+          { client: { name: { contains: search, mode: "insensitive" } } },
+          { project: { title: { contains: search, mode: "insensitive" } } },
+        ],
       };
 
-      if (type) {
-        where.type = type;
+      if (startDate || endDate) {
+        where.date = {};
+        if (startDate) where.date.gte = new Date(startDate);
+        if (endDate) where.date.lte = new Date(endDate);
       }
 
-      if (clientId) {
-        where.clientId = clientId;
-      }
-
-      if (projectId) {
-        where.projectId = projectId;
-      }
-
-      if (searchQuery) {
-        where.OR = [
-          { type: { contains: searchQuery, mode: 'insensitive' } },
-          { notes: { contains: searchQuery, mode: 'insensitive' } },
-          { client: { name: { contains: searchQuery, mode: 'insensitive' } } },
-          { project: { title: { contains: searchQuery, mode: 'insensitive' } } },
-        ];
-      }
-
-      const orderBy: any = {};
-      switch (sortField) {
-        case 'type':
-          orderBy.type = sortOrder;
-          break;
-        case 'date':
-          orderBy.date = sortOrder;
-          break;
-        case 'client':
-          orderBy.client = { name: sortOrder };
-          break;
-        case 'project':
-          orderBy.project = { title: sortOrder };
-          break;
-        default:
-          orderBy.date = 'desc';
+      const orderBy: Prisma.InteractionLogOrderByWithRelationInput = {};
+      if (sortField === "client") {
+        orderBy.client = { name: sortOrder as Prisma.SortOrder };
+      } else if (sortField === "project") {
+        orderBy.project = { title: sortOrder as Prisma.SortOrder };
+      } else {
+        orderBy[sortField as keyof Prisma.InteractionLogOrderByWithRelationInput] =
+          sortOrder as Prisma.SortOrder;
       }
 
       const interactionLogs = await prisma.interactionLog.findMany({
         where,
-        include: {
-          client: true,
-          project: true,
-        },
         orderBy,
+        include: {
+          client: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
+          project: {
+            select: {
+              id: true,
+              title: true,
+            },
+          },
+        },
       });
 
       return NextResponse.json(interactionLogs);
     } catch (error) {
-      console.error('Error fetching interaction logs:', error);
+      console.error("Error fetching interaction logs:", error);
       return NextResponse.json(
-        { error: 'Failed to fetch interaction logs' },
+        { error: "Failed to fetch interaction logs" },
         { status: 500 }
       );
     }
@@ -90,7 +80,7 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  return withAuth(request, async (user) => {
+  return withAuth(request, async (user:User) => {
     try {
       const body = await request.json();
       const validatedData = interactionLogSchema.parse(body);

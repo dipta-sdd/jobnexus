@@ -22,7 +22,7 @@ export default function RootLayout({
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             <div className="flex min-h-screen flex-col">
               <Navbar />
-              <main className="flex-1 container mx-auto py-0 bg-gray-50 dark:bg-gray-900">
+              <main className="flex-1 container mx-auto px-3 bg-gray-50 dark:bg-gray-900">
                 {children}
               </main>
             </div>

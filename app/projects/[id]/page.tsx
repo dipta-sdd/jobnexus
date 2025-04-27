@@ -12,7 +12,8 @@ import {
   AlertTriangle,
   RefreshCw,
   AlertCircle,
-  Check,
+  Edit,
+  Trash2,
 } from "lucide-react";
 import Modal from "@/components/ui/Modal";
 import api from "@/lib/axios";
@@ -26,6 +27,8 @@ import { InteractionLog } from "@/lib/generated/prisma";
 import { toast } from "react-hot-toast";
 import AddProject from "@/components/projects/add-project";
 import { filterReminders } from "@/lib/utils/reminder-filters";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function ProjectPage() {
   const { id } = useParams();
@@ -43,7 +46,7 @@ export default function ProjectPage() {
   const [reminderStatusFilter, setReminderStatusFilter] =
     useState<string>("due");
   const [sortedReminders, setSortedReminders] = useState<Reminder[]>([]);
-
+  const router = useRouter();
   const fetchProject = async () => {
     try {
       const res = await api.get(`/projects/${id}`);
@@ -98,13 +101,13 @@ export default function ProjectPage() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case "In Progress":
-        return "bg-blue-100 text-blue-800";
+        return "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100";
       case "Completed":
-        return "bg-green-100 text-green-800";
+        return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100";
       case "Pending":
-        return "bg-yellow-100 text-yellow-800";
+        return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-100";
       default:
-        return "bg-gray-100 text-gray-800";
+        return "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-100";
     }
   };
 
@@ -190,6 +193,17 @@ export default function ProjectPage() {
     }
   };
 
+  const handleDeleteProject = async () => {
+    try {
+      await api.delete(`/projects/${project?.id}`);
+      toast.success('Project deleted successfully');
+      router.push('/projects');
+    } catch (error) {
+      console.error('Error deleting project:', error);
+      toast.error('Failed to delete project');
+    }
+  };
+
   return (
     <>
       {isLoading || !project ? (
@@ -198,62 +212,86 @@ export default function ProjectPage() {
         <div className="w-full mx-auto">
           {/* Project Header */}
           <div className="my-4">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between">
+            <div className="flex flex-row items-center justify-between">
               <div>
-                <h1 className="text-2xl font-bold text-gray-900 capitalize">
-                  {project.title}
-                </h1>
-                <p className="text-sm text-gray-500 mt-1">
+                <div className="flex flex-row items-center justify-start gap-3">
+                  <h1 className="text-2xl font-bold text-gray-900 dark:text-white capitalize">
+                    {project.title}
+                  </h1>
+                  <span
+                    className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(
+                      project.status
+                    )}`}
+                  >
+                    {project.status}
+                  </span>
+                  {
+                    progress.isOverdue && (
+                      <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200">
+                        <AlertTriangle className="h-4 w-4 mr-1" />
+                        Overdue
+                      </span>
+                    )
+                  }
+                </div>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
                   Project ID: {project.id}
                 </p>
               </div>
-              <div className="mt-4 sm:mt-0 flex items-center gap-3">
-                <span
-                  className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(
-                    project.status
-                  )}`}
-                >
-                  {project.status}
-                </span>
+              <div className="flex items-start sm:items-center justify-end gap-3">
                 <button
-                  className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors"
+                  className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-600 transition-colors"
                   onClick={() => {
                     setIsModalOpen(true);
                   }}
                 >
-                  Edit Project
+                  <Edit className="h-4 w-4 mr-2 sm:hidden" />
+                  <span className="hidden sm:inline">Edit Project</span>
+                </button>
+                <button
+                  onClick={handleDeleteProject}
+                  className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600 transition-colors"
+                >
+                  <Trash2 className="h-4 w-4 mr-2 sm:hidden" />
+                  <span className="hidden sm:inline">Delete Project</span>
                 </button>
               </div>
             </div>
           </div>
 
           {/* Project Timeline */}
-          <div className="bg-white rounded-xs shadow-sm border border-gray-200 overflow-hidden mb-6">
-            <div className="px-6 py-5 border-b border-gray-200 bg-gray-50">
-              <h2 className="text-lg font-medium text-gray-900 flex items-center">
-                <Clock className="h-5 w-5 mr-2 text-gray-500" />
+          <div className="bg-white dark:bg-gray-800 rounded-xs shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden mb-3">
+            <div className="px-6 py-5 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
+              <h2 className="text-lg font-medium text-gray-900 dark:text-white flex items-center">
+                <Clock className="h-5 w-5 mr-2 text-gray-500 dark:text-gray-400" />
                 Project Timeline
               </h2>
             </div>
             <div className="p-6">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-                <div className="bg-gray-50 rounded-lg p-4">
-                  <div className="text-sm text-gray-500 mb-1">Start Date</div>
-                  <div className="text-lg font-medium text-gray-900 flex items-center">
+                <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                  <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">
+                    Start Date
+                  </div>
+                  <div className="text-lg font-medium text-gray-900 dark:text-white flex items-center">
                     <Calendar className="h-5 w-5 mr-2 text-blue-500" />
-                    {formatDate(project.startDate)}
+                    {formatDate(project.startDate.toString())}
                   </div>
                 </div>
-                <div className="bg-gray-50 rounded-lg p-4">
-                  <div className="text-sm text-gray-500 mb-1">Deadline</div>
-                  <div className="text-lg font-medium text-gray-900 flex items-center">
+                <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                  <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">
+                    Deadline
+                  </div>
+                  <div className="text-lg font-medium text-gray-900 dark:text-white flex items-center">
                     <Calendar className="h-5 w-5 mr-2 text-red-500" />
-                    {formatDate(project.deadline)}
+                    {formatDate(project.deadline.toString())}
                   </div>
                 </div>
-                <div className="bg-gray-50 rounded-lg p-4">
-                  <div className="text-sm text-gray-500 mb-1">Duration</div>
-                  <div className="text-lg font-medium text-gray-900 flex items-center">
+                <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                  <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">
+                    Duration
+                  </div>
+                  <div className="text-lg font-medium text-gray-900 dark:text-white flex items-center">
                     <Clock className="h-5 w-5 mr-2 text-purple-500" />
                     {progress.totalDays} days
                   </div>
@@ -262,18 +300,18 @@ export default function ProjectPage() {
 
               {/* Progress Bar */}
               <div className="mb-2">
-                <div className="flex justify-between text-sm text-gray-500 mb-1">
+                <div className="flex justify-between text-sm text-gray-500 dark:text-gray-400 mb-1">
                   <span>Progress</span>
                   <span>{progress.percentage}%</span>
                 </div>
-                <div className="w-full bg-gray-200 rounded-full h-2.5">
+                <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5">
                   <div
                     className={`h-2.5 rounded-full ${
                       project.status === "Completed"
-                        ? "bg-green-500"
+                        ? "bg-green-500 dark:bg-green-400"
                         : progress.isOverdue
-                        ? "bg-red-500"
-                        : "bg-blue-500"
+                        ? "bg-red-500 dark:bg-red-400"
+                        : "bg-blue-500 dark:bg-blue-400"
                     }`}
                     style={{ width: `${progress.percentage}%` }}
                   ></div>
@@ -281,22 +319,22 @@ export default function ProjectPage() {
               </div>
 
               <div className="flex justify-between items-center mt-2">
-                <div className="text-sm text-gray-500">
+                <div className="text-sm text-gray-500 dark:text-gray-400">
                   Day {progress.elapsedDays} of {progress.totalDays}
                 </div>
                 <div className="text-sm font-medium">
                   {progress.isOverdue ? (
-                    <span className="text-red-600 flex items-center">
+                    <span className="text-red-600 dark:text-red-400 flex items-center">
                       <AlertTriangle className="h-4 w-4 mr-1" />
                       Overdue by {Math.abs(progress.daysRemaining)} days
                     </span>
                   ) : project.status === "Completed" ? (
-                    <span className="text-green-600 flex items-center">
+                    <span className="text-green-600 dark:text-green-400 flex items-center">
                       <CheckCircle className="h-4 w-4 mr-1" />
                       Completed
                     </span>
                   ) : (
-                    <span className="text-blue-600">
+                    <span className="text-blue-600 dark:text-blue-400">
                       {progress.daysRemaining} days remaining
                     </span>
                   )}
@@ -309,17 +347,17 @@ export default function ProjectPage() {
             {/* Project Details */}
             <div className="md:col-span-2 space-y-3">
               {/* Project Information */}
-              <div className="bg-white rounded-xs shadow-sm border border-gray-200 overflow-hidden">
-                <div className="px-6 py-5 border-b border-gray-200 bg-gray-50">
-                  <h2 className="text-lg font-medium text-gray-900 flex items-center">
-                    <FileText className="h-5 w-5 mr-2 text-gray-500" />
+              <div className="bg-white dark:bg-gray-800 rounded-xs shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+                <div className="px-6 py-5 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
+                  <h2 className="text-lg font-medium text-gray-900 dark:text-white flex items-center">
+                    <FileText className="h-5 w-5 mr-2 text-gray-500 dark:text-gray-400" />
                     Project Information
                   </h2>
                 </div>
                 <div className="p-6">
                   <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-6">
                     <div>
-                      <dt className="text-sm font-medium text-gray-500">
+                      <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">
                         Description
                       </dt>
                       <dd className="mt-1 text-sm text-gray-900 dark:text-gray-100 break-words">
@@ -332,25 +370,25 @@ export default function ProjectPage() {
                       </dd>
                     </div>
                     <div>
-                      <dt className="text-sm font-medium text-gray-500 flex items-center">
-                        <DollarSign className="h-4 w-4 mr-1 text-gray-400" />
+                      <dt className="text-sm font-medium text-gray-500 dark:text-gray-400 flex items-center">
+                        <DollarSign className="h-4 w-4 mr-1 text-gray-400 dark:text-gray-500" />
                         Budget
                       </dt>
-                      <dd className="mt-1 text-sm text-gray-900">
+                      <dd className="mt-1 text-sm text-gray-900 dark:text-white">
                         ${project.budget}
                       </dd>
                     </div>
                     <div className="col-span-2">
                       <details className="text-sm">
-                        <summary className="text-gray-500 font-medium cursor-pointer hover:text-gray-700">
+                        <summary className="text-gray-500 dark:text-gray-400 font-medium cursor-pointer hover:text-gray-700 dark:hover:text-gray-300">
                           System Information
                         </summary>
-                        <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-4 pl-4 text-gray-500">
+                        <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-4 pl-4 text-gray-500 dark:text-gray-400">
                           <div>
                             <dt className="text-xs font-medium">Created</dt>
                             <dd className="mt-1">
-                              {formatDate(project.createdAt)} at{" "}
-                              {formatTime(project.createdAt)}
+                              {formatDate(project.createdAt.toString())} at{" "}
+                              {formatTime(project.createdAt.toString())}
                             </dd>
                             <dd className="mt-1 text-xs">
                               ({getTimeAgo(project.createdAt)})
@@ -361,11 +399,11 @@ export default function ProjectPage() {
                               Last Updated
                             </dt>
                             <dd className="mt-1">
-                              {formatDate(project.updatedAt)} at{" "}
-                              {formatTime(project.updatedAt)}
+                              {formatDate(project.updatedAt.toString())} at{" "}
+                              {formatTime(project.updatedAt.toString())}
                             </dd>
                             <dd className="mt-1 text-xs">
-                              ({getTimeAgo(project.updatedAt)})
+                              ({getTimeAgo(project.updatedAt.toString())})
                             </dd>
                           </div>
                         </div>
@@ -376,29 +414,29 @@ export default function ProjectPage() {
               </div>
 
               {/* Activity Logs */}
-              <div className="bg-white rounded-xs shadow-sm border border-gray-200 overflow-hidden">
-                <div className="px-6 py-5 border-b border-gray-200 bg-gray-50 flex justify-between items-center">
-                  <h2 className="text-lg font-medium text-gray-900 flex items-center">
-                    <RefreshCw className="h-5 w-5 mr-2 text-gray-500" />
+              <div className="bg-white dark:bg-gray-800 rounded-xs shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+                <div className="px-6 py-5 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 flex justify-between items-center">
+                  <h2 className="text-lg font-medium text-gray-900 dark:text-white flex items-center">
+                    <RefreshCw className="h-5 w-5 mr-2 text-gray-500 dark:text-gray-400" />
                     Interaction Logs
                   </h2>
-                  <span className="text-sm text-gray-500">
+                  <span className="text-sm text-gray-500 dark:text-gray-400">
                     {sortedLogs.length} entries
                   </span>
                 </div>
                 <div>
                   {sortedLogs.length > 0 ? (
-                    <ul className="divide-y divide-gray-200">
+                    <ul className="divide-y divide-gray-200 dark:divide-gray-700">
                       {sortedLogs.map((log) => (
                         <li key={log.id} className="px-6 py-4">
                           <div className="flex items-start">
                             <div className="min-w-0 flex-1">
-                              <p className="text-sm font-medium text-gray-900 capitalize">
+                              <p className="text-sm font-medium text-gray-900 dark:text-white capitalize">
                                 {log.type} {getTimeAgo(log.date.toString())}
                               </p>
                             </div>
                             <div className="ml-4">
-                              <span className="inline-block px-2 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-800">
+                              <span className="inline-block px-2 py-1 text-xs font-medium rounded-full bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200">
                                 {formatDate(log.date.toString())} ,{" "}
                                 {formatTime(log.date.toString())}
                               </span>
@@ -411,7 +449,7 @@ export default function ProjectPage() {
                             />
                             <div className="flex items-center gap-2">
                               <button
-                                className="text-sm text-blue-500 hover:text-blue-600 cursor-pointer"
+                                className="text-sm text-blue-500 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300 cursor-pointer"
                                 onClick={() => {
                                   setEditLog(log);
                                   setIsEditLogModalOpen(true);
@@ -420,7 +458,7 @@ export default function ProjectPage() {
                                 Edit
                               </button>
                               <button
-                                className="text-sm text-red-500 hover:text-red-600 cursor-pointer"
+                                className="text-sm text-red-500 dark:text-red-400 hover:text-red-600 dark:hover:text-red-300 cursor-pointer"
                                 onClick={() => {
                                   handleDeleteLog(log.id);
                                 }}
@@ -433,7 +471,7 @@ export default function ProjectPage() {
                       ))}
                     </ul>
                   ) : (
-                    <div className="px-6 py-5 text-center text-sm text-gray-500">
+                    <div className="px-6 py-5 text-center text-sm text-gray-500 dark:text-gray-400">
                       No activity logs found
                     </div>
                   )}
@@ -461,7 +499,7 @@ export default function ProjectPage() {
                   <div className="flex items-center gap-4">
                     <span className="text-sm text-gray-500 dark:text-gray-400">
                       <select
-                        className="text-sm text-gray-500 dark:text-gray-400"
+                        className="text-sm text-gray-500 dark:text-gray-400 bg-transparent"
                         value={reminderFilter}
                         onChange={(e) => setReminderFilter(e.target.value)}
                       >
@@ -484,7 +522,7 @@ export default function ProjectPage() {
                     </span>
                     <span className="text-sm text-gray-500 dark:text-gray-400">
                       <select
-                        className="text-sm text-gray-500 dark:text-gray-400"
+                        className="text-sm text-gray-500 dark:text-gray-400 bg-transparent"
                         value={reminderStatusFilter}
                         onChange={(e) =>
                           setReminderStatusFilter(e.target.value)
@@ -562,7 +600,7 @@ export default function ProjectPage() {
                                     setEditReminder(reminder);
                                     setIsEditReminderModalOpen(true);
                                   }}
-                                  className="text-sm text-blue-500 hover:text-blue-600 cursor-pointer "
+                                  className="text-sm text-blue-500 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300 cursor-pointer "
                                 >
                                   Edit
                                 </button>
@@ -570,7 +608,7 @@ export default function ProjectPage() {
                                   onClick={() =>
                                     handleDeleteReminder(reminder.id)
                                   }
-                                  className="text-sm text-red-500 hover:text-red-600 cursor-pointer "
+                                  className="text-sm text-red-500 dark:text-red-400 hover:text-red-600 dark:hover:text-red-300 cursor-pointer "
                                 >
                                   Delete
                                 </button>
@@ -602,44 +640,49 @@ export default function ProjectPage() {
 
             {/* Client Information */}
             <div className="space-y-3">
-              <div className="bg-white rounded-xs shadow-sm border border-gray-200 overflow-hidden">
-                <div className="px-6 py-5 border-b border-gray-200 bg-gray-50">
-                  <h2 className="text-lg font-medium text-gray-900 flex items-center">
-                    <User className="h-5 w-5 mr-2 text-gray-500" />
+              <div className="bg-white dark:bg-gray-800 rounded-xs shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+                <div className="px-6 py-5 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
+                  <h2 className="text-lg font-medium text-gray-900 dark:text-white flex items-center">
+                    <User className="h-5 w-5 mr-2 text-gray-500 dark:text-gray-400" />
                     Client Information
                   </h2>
                 </div>
                 <div className="p-6">
                   <dl className="space-y-4">
                     <div>
-                      <dt className="text-sm font-medium text-gray-500">
+                      <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">
                         Name
                       </dt>
-                      <dd className="mt-1 text-sm text-gray-900">
-                        {project.client.name}
+                      <dd className="mt-1 text-sm text-gray-900 dark:text-white">
+                        <Link
+                          href={`/clients/${project.client.id}`}
+                          className="text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 cursor-pointer"
+                        >
+                          {project.client.name}
+                        </Link>
                       </dd>
                     </div>
                     <div>
-                      <dt className="text-sm font-medium text-gray-500">
+                      <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">
                         Email
                       </dt>
-                      <dd className="mt-1 text-sm text-gray-900">
+                      <dd className="mt-1 text-sm text-gray-900 dark:text-white">
                         <a
                           href={`mailto:${project.client.email}`}
-                          className="text-blue-600 hover:text-blue-500"
+                          className="text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300"
                         >
                           {project.client.email}
                         </a>
                       </dd>
                     </div>
                     <div>
-                      <dt className="text-sm font-medium text-gray-500">
+                      <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">
                         Phone
                       </dt>
-                      <dd className="mt-1 text-sm text-gray-900">
+                      <dd className="mt-1 text-sm text-gray-900 dark:text-white">
                         <a
                           href={`tel:${project.client.phone}`}
-                          className="text-blue-600 hover:text-blue-500"
+                          className="text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300"
                         >
                           {project.client.phone}
                         </a>
@@ -668,27 +711,24 @@ export default function ProjectPage() {
               </div>
 
               {/* Quick Actions */}
-              <div className="bg-white rounded-xs shadow-sm border border-gray-200 overflow-hidden">
-                <div className="px-6 py-5 border-b border-gray-200 bg-gray-50">
-                  <h2 className="text-lg font-medium text-gray-900">
+              <div className="bg-white dark:bg-gray-800 rounded-xs shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+                <div className="px-6 py-5 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/50">
+                  <h2 className="text-lg font-medium text-gray-900 dark:text-white">
                     Quick Actions
                   </h2>
                 </div>
                 <div className="p-6 space-y-3">
                   <button
                     onClick={() => setIsAddLogModalOpen(true)}
-                    className="w-full flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
+                    className="w-full flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600"
                   >
                     Add Interaction Log
                   </button>
                   <button
                     onClick={() => setIsAddReminderModalOpen(true)}
-                    className="w-full flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-purple-600 hover:bg-purple-700"
+                    className="w-full flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 dark:bg-purple-500 dark:hover:bg-purple-600"
                   >
                     Add Reminder
-                  </button>
-                  <button className="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
-                    Contact Client
                   </button>
                 </div>
               </div>
@@ -730,16 +770,19 @@ export default function ProjectPage() {
               clients={clients}
               onClose={(data?: InteractionLog) => {
                 if (data) {
-                  setProject({
-                    ...project,
-                    logs: [...(project?.logs || []), data],
+                  setProject((prevProject) => {
+                    if (!prevProject) return null;
+                    return {
+                      ...prevProject,
+                      logs: [...(prevProject.logs || []), data],
+                    };
                   });
                 }
                 setIsAddLogModalOpen(false);
               }}
               clientId={project?.clientId}
               projectId={project?.id}
-              onUpdate={(data: InteractionLog) => {}}
+              onUpdate={()=>{}}
             />
           </Modal>
           {/* edit log modal */}
@@ -757,11 +800,14 @@ export default function ProjectPage() {
               }}
               log={editLog}
               onUpdate={(data: InteractionLog) => {
-                setProject({
-                  ...project,
-                  logs: project?.logs?.map((log) =>
-                    log.id === editLog?.id ? data : log
-                  ),
+                setProject((prevProject) => {
+                  if (!prevProject) return null;
+                  return {
+                    ...prevProject,
+                    logs: prevProject.logs?.map((log) =>
+                      log.id === editLog?.id ? data : log
+                    ),
+                  };
                 });
                 setIsEditLogModalOpen(false);
               }}
@@ -788,7 +834,7 @@ export default function ProjectPage() {
                 }
                 setIsAddReminderModalOpen(false);
               }}
-              onUpdate={(data: Reminder) => {}}
+              onUpdate={() => {}}
             />
           </Modal>
           {/* edit reminder modal */}

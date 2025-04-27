@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import prisma from "@/lib/prisma";
 import { cookiesToUser } from "@/lib/auth";
 import { User } from "@/lib/types";
 import { withAuth } from "@/lib/middleware/withAuth";
-
+import { Prisma } from "@/lib/generated/prisma";
+import prisma from "@/lib/prisma";
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
@@ -41,37 +41,36 @@ export async function GET(request: NextRequest) {
   return withAuth(request, async (user: User) => {
     try {
       const { searchParams } = new URL(request.url);
-      
-      // Get search parameter
-      const searchQuery = searchParams.get('search');
-      
-      // Get sort parameters
-      const sortField = searchParams.get('sortField') || 'name';
-      const sortOrder = searchParams.get('sortOrder') || 'asc';
+      const search = searchParams.get("search") || "";
+      const startDate = searchParams.get("startDate");
+      const endDate = searchParams.get("endDate");
+      const sortField = searchParams.get("sortField") || "name";
+      const sortOrder = searchParams.get("sortOrder") || "asc";
 
-      // Build where clause for search
-      const where: {
-        userId: string;
-        OR?: Array<{
-          name?: { contains: string; mode: 'insensitive' };
-          email?: { contains: string; mode: 'insensitive' };
-          phone?: { contains: string; mode: 'insensitive' };
-        }>;
-      } = {
+      const where: Prisma.ClientWhereInput = {
         userId: user.id,
+        OR: [
+          { name: { contains: search, mode: "insensitive" } },
+          { email: { contains: search, mode: "insensitive" } },
+          { phone: { contains: search, mode: "insensitive" } },
+        ],
       };
 
-      if (searchQuery) {
-        where.OR = [
-          { name: { contains: searchQuery, mode: 'insensitive' } },
-          { email: { contains: searchQuery, mode: 'insensitive' } },
-          { phone: { contains: searchQuery, mode: 'insensitive' } },
-        ];
+      if (startDate || endDate) {
+        where.createdAt = {};
+        if (startDate) where.createdAt.gte = new Date(startDate);
+        if (endDate) where.createdAt.lte = new Date(endDate);
       }
 
-      // Build orderBy clause
-      const orderBy: Record<string, 'asc' | 'desc'> = {};
-      orderBy[sortField] = sortOrder as 'asc' | 'desc';
+      const orderBy: Prisma.ClientOrderByWithRelationInput = {};
+      if (sortField === "projects") {
+        orderBy.projects = {
+          _count: sortOrder as Prisma.SortOrder,
+        };
+      } else {
+        orderBy[sortField as keyof Prisma.ClientOrderByWithRelationInput] =
+          sortOrder as Prisma.SortOrder;
+      }
 
       const clients = await prisma.client.findMany({
         where,
@@ -85,9 +84,9 @@ export async function GET(request: NextRequest) {
 
       return NextResponse.json(clients);
     } catch (error) {
-      console.error('Error fetching clients:', error);
+      console.error("Error fetching clients:", error);
       return NextResponse.json(
-        { error: 'Failed to fetch clients' },
+        { error: "Failed to fetch clients" },
         { status: 500 }
       );
     }

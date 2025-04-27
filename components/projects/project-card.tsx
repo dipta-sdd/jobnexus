@@ -1,22 +1,17 @@
 import { Project } from "@/lib/types";
-import { Clock, FileText } from "lucide-react";
+import { formatDate } from "@/lib/utils/date";
+import { Clock, Edit, FileText, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useMemo } from "react";
 
 interface ProjectCardProps {
-  project: Project;
+  project: Project ;
+  onEdit: () => void;
+  onDelete: () => void;
 }
 
-export default function ProjectCard({ project }: ProjectCardProps) {
-  // Format date function
-  const formatDate = (dateString: string) => {
-    if (!dateString) return "N/A";
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "numeric",
-      day: "numeric",
-    });
-  };
+export default function ProjectCard({ project, onEdit, onDelete }: ProjectCardProps) {
+
 
   // Status badge color
   const getStatusColor = (status: string) => {
@@ -121,7 +116,7 @@ export default function ProjectCard({ project }: ProjectCardProps) {
                   : "text-gray-900 dark:text-gray-100"
               }`}
             >
-              {formatDate(project.deadline.toString())}
+              {formatDate(new Date(project.deadline))}
             </div>
           </div>
         </div>
@@ -158,31 +153,43 @@ export default function ProjectCard({ project }: ProjectCardProps) {
       <div className="px-5 py-3 bg-gray-50 dark:bg-gray-700 border-t border-gray-200 dark:border-gray-500 mt-2">
         <div className="flex justify-between items-center">
           <div className="flex space-x-4 text-xs text-gray-500 dark:text-gray-400">
-            {project.reminders.length > 0 && (
+            {project?.reminders?.length && project?.reminders?.length > 0 && (
               <div className="flex items-center">
                 <Clock className="w-3 h-3 text-yellow-400 dark:text-yellow-400 mr-1" />
                 <span>
-                  {project.reminders.length} reminder
-                  {project.reminders.length !== 1 ? "s" : ""}
+                  {project?.reminders?.length} reminder
+                  {project?.reminders?.length !== 1 ? "s" : ""}
                 </span>
               </div>
             )}
-            {project.logs.length > 0 && (
+            {project?.logs?.length && project?.logs?.length > 0 && (
               <div className="flex items-center">
                 <FileText className="h-3 w-3 mr-1 text-purple-500 dark:text-purple-400" />
                 <span>
-                  {project.logs.length} log
-                  {project.logs.length !== 1 ? "s" : ""}
+                  {project?.logs?.length} log
+                  {project?.logs?.length !== 1 ? "s" : ""}
                 </span>
               </div>
             )}
           </div>
-          <Link
-            href={`/projects/${project.id}/edit`}
-            className="text-sm text-green-600 dark:text-green-800 hover:text-green-800 font-medium"
+          <div
+            className="flex space-x-1 transition-all duration-200 hover:opacity-100 opacity-30"
           >
-            Edit
-          </Link>
+            <button
+              onClick={onEdit}
+              className="p-1.5 rounded-md bg-gray-100 dark:bg-gray-700 hover:bg-blue-100 dark:hover:bg-blue-900 text-muted-foreground hover:text-blue-800 dark:hover:text-blue-100 transition-colors"
+              aria-label="Edit project"
+            >
+              <Edit className="h-3 w-3" />
+            </button>
+            <button
+              onClick={onDelete}
+              className="p-1.5 rounded-md bg-gray-100 dark:bg-gray-700 hover:bg-red-100 dark:hover:bg-red-900 text-muted-foreground hover:text-red-800 dark:hover:text-red-100 transition-colors"
+              aria-label="Delete project"
+            >
+              <Trash2 className="h-3 w-3" />
+            </button>
+          </div>
         </div>
       </div>
     </div>

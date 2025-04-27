@@ -3,27 +3,19 @@ import {
   Mail,
   Phone,
   Calendar,
-  AlertCircle,
   FileText,
   Clock,
   FolderClosed,
 } from "lucide-react";
 import { Client, Project, Reminder } from "@/lib/types";
+import formatDateTime from "@/lib/utils/date";
 
 type ClientRowProps = {
   client: Client;
 };
 
 export default function ClientRow({ client }: ClientRowProps) {
-  // Format date function
-  const formatDate = (dateString: string) => {
-    if (!dateString) return "N/A";
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    });
-  };
+
 
   // Count active projects
   const activeProjects = client?.projects?.filter(
@@ -74,14 +66,20 @@ export default function ClientRow({ client }: ClientRowProps) {
 
       <td className="px-6 py-4 whitespace-nowrap">
         <div className="text-sm text-gray-500">
-          <Calendar className="h-4 w-4 inline mr-1 text-gray-400" />
-          {formatDate(client?.createdAt?.toString() || "")}
+          <Calendar className="h-4 w-4 inline mr-1 mb-0.5 text-gray-400" />
+          {formatDateTime(new Date(client?.createdAt))}
+        </div>
+      </td>
+      <td className="px-6 py-4 whitespace-nowrap">
+        <div className="text-sm text-gray-500">
+          <Calendar className="h-4 w-4 inline mr-1 mb-0.5 text-gray-400" />
+          {formatDateTime(new Date(client?.createdAt))}
         </div>
       </td>
       <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
         <div className="flex items-center justify-between space-x-3">
           <div className="flex space-x-2">
-            {client?.projects?.length > 0 && (
+            {(client?.projects?.length && client?.projects?.length > 0) ? (
               <div
                 className="flex items-center"
                 title={`${client.projects.length} projects`}
@@ -96,18 +94,18 @@ export default function ClientRow({ client }: ClientRowProps) {
                   }`}
                 />
                 <span className="ml-1 text-xs text-gray-500 dark:text-gray-400">
-                  {client.projects.length}
+                  {client?.projects?.length}
                 </span>
               </div>
-            )}
-            {client.reminders.length > 0 && (
+            ) : null}
+            {(client?.reminders?.length && client?.reminders?.length > 0) ? (
               <div
                 className="flex items-center"
                 title={`${client.reminders.length} reminders`}
               >
                 <Clock
                   className={`w-3 h-3 ${
-                    upcomingReminders > 0
+                    upcomingReminders && upcomingReminders > 0
                       ? "text-yellow-700"
                       : client.reminders.length > 0
                       ? "text-yellow-500"
@@ -118,22 +116,24 @@ export default function ClientRow({ client }: ClientRowProps) {
                   {client.reminders.length}
                 </span>
               </div>
-            )}
-            {client.logs.length > 0 && (
+            ) : null}
+            {(client?.logs?.length && client?.logs?.length > 0) ? (
               <div
                 className="flex items-center"
                 title={`${client.logs.length} logs`}
               >
                 <FileText
                   className={`w-3 h-3  ${
-                    client.logs.length > 0 ? "text-purple-500" : "text-gray-500"
+                    client?.logs?.length && client?.logs?.length > 0
+                      ? "text-purple-500"
+                      : "text-gray-500"
                   }  mr-1`}
                 />
                 <span className="ml-1 text-xs text-gray-500 dark:text-gray-400">
-                  {client.logs.length}
+                  {client?.logs?.length}
                 </span>
               </div>
-            )}
+            ) : null}
           </div>
 
           <Link

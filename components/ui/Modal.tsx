@@ -17,12 +17,12 @@ export default function Modal({ isOpen, onClose, children, title }: ModalProps) 
 
       {/* Modal */}
       <div className="flex min-h-full items-center justify-center p-4 text-center">
-        <div className="relative transform overflow-hidden rounded-lg bg-white dark:bg-gray-800 px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6">
+        <div className="relative transform overflow-hidden rounded-lg bg-white dark:bg-gray-800 px-4 pb-4 pt-5 text-left shadow-xl border border-gray-200 dark:border-gray-700 transition-all sm:my-8 w-full max-w-lg sm:p-6">
           {/* Close button */}
           <div className="absolute right-0 top-0 pr-4 pt-4">
             <button
               type="button"
-              className="rounded-md bg-white dark:bg-gray-800 text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
+              className="rounded-md bg-white dark:bg-gray-800 text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 cursor-pointer" aria-label="Close"
               onClick={onClose}
             >
               <span className="sr-only">Close</span>

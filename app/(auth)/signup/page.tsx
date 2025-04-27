@@ -75,9 +75,6 @@ export default function SignupPage() {
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
             Create your account
           </h1>
-          <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-            Join thousands of freelancers and clients
-          </p>
         </div>
 
         <div className="mt-8 bg-white dark:bg-gray-800 py-8 px-4 shadow sm:rounded-lg sm:px-10">
@@ -268,7 +265,7 @@ export default function SignupPage() {
             </div>
           </form>
 
-          <div className="mt-6">
+          {/* <div className="mt-6">
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
                 <div className="w-full border-t border-gray-300 dark:border-gray-600"></div>
@@ -328,7 +325,7 @@ export default function SignupPage() {
                 </svg>
               </button>
             </div>
-          </div>
+          </div> */}
 
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600 dark:text-gray-400">

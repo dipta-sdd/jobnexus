@@ -50,6 +50,8 @@ export interface InteractionLog {
   project?: Project | null;
   userId: string;
   user?: User | null;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface Reminder {

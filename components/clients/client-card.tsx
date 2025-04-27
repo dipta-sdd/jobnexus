@@ -24,7 +24,7 @@ export default function ClientCard({ client }: ClientCardProps) {
   ).length;
 
   // Check for upcoming reminders (due in the next 48 hours)
-  const upcomingReminders = client.reminders.filter((reminder) => {
+  const upcomingReminders = client?.reminders?.filter((reminder) => {
     const dueDate = new Date(reminder.dueDate);
     const now = new Date();
     const diffTime = dueDate.getTime() - now.getTime();
@@ -35,16 +35,16 @@ export default function ClientCard({ client }: ClientCardProps) {
   // Get latest activity (log or reminder)
   const getLatestActivity = () => {
     const activities = [
-      ...client.logs.map((log) => ({
+      ...(client?.logs?.map((log) => ({
         type: "log",
         date: log.date,
         title: log.type,
-      })),
-      ...client.reminders.map((reminder) => ({
+      })) || []),
+      ...(client?.reminders?.map((reminder) => ({
         type: "reminder",
         date: reminder.dueDate,
         title: reminder.title,
-      })),
+      })) || [])
     ];
 
     if (activities.length === 0) return null;
@@ -63,10 +63,10 @@ export default function ClientCard({ client }: ClientCardProps) {
       <div className="relative">
         <div
           className={`h-1.5 w-full ${
-            upcomingReminders > 0
+            (upcomingReminders && upcomingReminders > 0)
               ? "bg-yellow-500 dark:bg-yellow-700"
-              : client?.projects?.length > 0
-              ? activeProjects > 0
+              : (client?.projects?.length && client?.projects?.length > 0)
+              ? (activeProjects && activeProjects > 0)
                 ? "bg-green-500"
                 : "bg-blue-500"
               : "bg-gray-300"

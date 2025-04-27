@@ -16,8 +16,8 @@ export function Description({ text, length, className }: DescriptionProps) {
   }
 
   return (
-    <div>
-      <p className={`text-sm text-gray-600 dark:text-gray-400 ${className || ''}`}>
+    <>
+      <p className={`text-sm text-gray-600 dark:text-gray-400 text-wrap break-words ${className || ''}`}>
         {isExpanded ? text : `${text.slice(0, length)} ...`}
         <button
           onClick={() => setIsExpanded(!isExpanded)}
@@ -26,6 +26,6 @@ export function Description({ text, length, className }: DescriptionProps) {
           {isExpanded ? "View less" : "View more"}
         </button>
       </p>
-    </div>
+    </>
   );
 }

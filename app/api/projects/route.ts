@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { withAuth } from '@/lib/middleware/withAuth';
 import { z } from 'zod';
+import { Prisma } from '@/lib/generated/prisma';
+import { User } from '@/lib/types';
 
 const projectSchema = z.object({
   title: z.string().min(1),
@@ -13,38 +15,49 @@ const projectSchema = z.object({
 });
 
 export async function GET(request: NextRequest) {
-  return withAuth(request, async (user) => {
+  return withAuth(request, async (user:User) => {
     try {
       const { searchParams } = new URL(request.url);
-      
-      // Get search parameter
-      const searchQuery = searchParams.get('search');
-      
-      // Get sort parameters
-      const sortField = searchParams.get('sortField') || 'title';
-      const sortOrder = searchParams.get('sortOrder') || 'asc';
+      const search = searchParams.get("search") || "";
+      const startDate = searchParams.get("startDate");
+      const endDate = searchParams.get("endDate");
+      const sortField = searchParams.get("sortField") || "title";
+      const sortOrder = searchParams.get("sortOrder") || "asc";
 
-      // Build where clause for search
-      const where: any = {
+      const where: Prisma.ProjectWhereInput = {
         userId: user.id,
+        OR: [
+          { title: { contains: search, mode: "insensitive" } },
+          { description: { contains: search, mode: "insensitive" } },
+          { status: { contains: search, mode: "insensitive" } },
+          { client: { name: { contains: search, mode: "insensitive" } } },
+        ],
       };
 
-      if (searchQuery) {
-        where.OR = [
-          { title: { contains: searchQuery, mode: 'insensitive' } },
-          { description: { contains: searchQuery, mode: 'insensitive' } },
-          { status: { contains: searchQuery, mode: 'insensitive' } },
-          { client: { name: { contains: searchQuery, mode: 'insensitive' } } },
-        ];
+      if (startDate || endDate) {
+        where.deadline = {};
+        if (startDate) where.deadline.gte = new Date(startDate);
+        if (endDate) where.deadline.lte = new Date(endDate);
       }
 
-      const orderBy: any = {};
-      orderBy[sortField] = sortOrder;
+      const orderBy: Prisma.ProjectOrderByWithRelationInput = {};
+      if (sortField === "client") {
+        orderBy.client = { name: sortOrder as Prisma.SortOrder };
+      } else {
+        orderBy[sortField as keyof Prisma.ProjectOrderByWithRelationInput] =
+          sortOrder as Prisma.SortOrder;
+      }
 
       const projects = await prisma.project.findMany({
         where,
         include: {
-          client: true,
+          client: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
           logs: true,
           reminders: true,
         },
@@ -53,9 +66,9 @@ export async function GET(request: NextRequest) {
 
       return NextResponse.json(projects);
     } catch (error) {
-      console.error('Error fetching projects:', error);
+      console.error("Error fetching projects:", error);
       return NextResponse.json(
-        { error: 'Failed to fetch projects' },
+        { error: "Failed to fetch projects" },
         { status: 500 }
       );
     }
@@ -63,7 +76,7 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  return withAuth(request, async (user) => {
+  return withAuth(request, async (user:User) => {
     try {
       const body = await request.json();
       const validatedData = projectSchema.parse(body);
@@ -77,9 +90,6 @@ export async function POST(request: NextRequest) {
           status: validatedData.status,
           clientId: validatedData.clientId,
           userId: user.id,
-        },
-        include: {
-          client: true,
         },
       });
 

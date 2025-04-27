@@ -1,41 +1,79 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Plus, Search } from 'lucide-react';
+import { Search } from 'lucide-react';
 import Modal from '@/components/ui/Modal';
 import api from '@/lib/axios';
 import { Client, InteractionLog } from '@/lib/types';
 import AddInteractionLog from '@/components/interaction-logs/add-interaction-log';
 import InteractionLogCard from '@/components/interaction-logs/interaction-log-card';
 import InteractionLogRow from '@/components/interaction-logs/interaction-log-row';
-
+import Header from '@/components/Header';
+import { toast } from 'react-hot-toast';
+import InteractionLogCardLoader from '@/components/loaders/interaction-log-card-loader';
+import ProjectRowLoader from '@/components/loaders/project-row-loader';
+import Thead from '@/components/THead';
 type SortField = 'date' | 'type' | 'client' | 'project';
 type SortOrder = 'asc' | 'desc';
 
 export default function InteractionLogsPage() {
   const [searchQuery, setSearchQuery] = useState('');
-  const [view, setView] = useState('grid'); // grid or list
+  const [view, setView] = useState('grid');
+  const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editLog, setEditLog] = useState<InteractionLog | null>(null);
   const [clients, setClients] = useState<Client[]>([]);
   const [logs, setLogs] = useState<InteractionLog[]>([]);
-  const [sortField, setSortField] = useState<SortField>('date');
+  const [sortField, setSortField] = useState<string>('date');
   const [sortOrder, setSortOrder] = useState<SortOrder>('desc');
+  const [startDate, setStartDate] = useState<string>('');
+  const [endDate, setEndDate] = useState<string>('');
+
+  const theadOptions = [
+    { label: "Type", field: "type", isSortable: true },
+    { label: "Date", field: "date", isSortable: true },
+    { label: "Notes", field: "notes", isSortable: true },
+    { label: "Client", field: "client", isSortable: true },
+    { label: "Project", field: "project", isSortable: true },
+    { label: "Last Updated", field: "updatedAt", isSortable: true },
+    { label: "Created At", field: "createdAt", isSortable: true },
+    { label: "Actions", field: "actions", isSortable: false },
+  ];
+
+  const sortOptions = [
+    { label: "Type (A-Z)", field: "type", order: "asc" },
+    { label: "Type (Z-A)", field: "type", order: "desc" },
+    { label: "Date (Ascending)", field: "date", order: "asc" },
+    { label: "Date (Descending)", field: "date", order: "desc" },
+    { label: "Notes (A-Z)", field: "notes", order: "asc" },
+    { label: "Notes (Z-A)", field: "notes", order: "desc" },
+    { label: "Client (A-Z)", field: "client", order: "asc" },
+    { label: "Client (Z-A)", field: "client", order: "desc" },
+    { label: "Project (A-Z)", field: "project", order: "asc" },
+    { label: "Project (Z-A)", field: "project", order: "desc" },
+    { label: "Last Updated (Ascending)", field: "updatedAt", order: "asc" },
+    { label: "Last Updated (Descending)", field: "updatedAt", order: "desc" },
+    { label: "Created At (Ascending)", field: "createdAt", order: "asc" },
+    { label: "Created At (Descending)", field: "createdAt", order: "desc" },
+  ];
 
   const fetchLogs = async () => {
     try {
+      setIsLoading(true);
       const params = new URLSearchParams();
-      
-      // Add search parameter
       if (searchQuery) params.append('search', searchQuery);
-      
-      // Add sort parameters
+      if (startDate) params.append('startDate', startDate);
+      if (endDate) params.append('endDate', endDate);
       params.append('sortField', sortField);
       params.append('sortOrder', sortOrder);
 
       const res = await api.get(`/interaction-logs?${params.toString()}`);
       setLogs(res.data);
+      setIsLoading(false);
     } catch (error) {
       console.error('Error fetching interaction logs:', error);
+      setIsLoading(false);
     }
   };
 
@@ -51,7 +89,7 @@ export default function InteractionLogsPage() {
   useEffect(() => {
     fetchLogs();
     fetchClients();
-  }, [searchQuery, sortField, sortOrder]);
+  }, [searchQuery, startDate, endDate, sortField, sortOrder]);
 
   const handleSort = (field: SortField) => {
     if (sortField === field) {
@@ -62,147 +100,99 @@ export default function InteractionLogsPage() {
     }
   };
 
-  const getSortIcon = (field: SortField) => {
-    if (sortField !== field) return null;
-    return sortOrder === 'asc' ? '↑' : '↓';
+  const handleDelete = async (id: string) => {
+    try {
+      await api.delete(`/interaction-logs/${id}`);
+      setLogs(logs.filter((log) => log.id !== id));
+      toast.success('Interaction log deleted successfully');
+    } catch (error) {
+      toast.error('Error deleting interaction log');
+      console.error('Error deleting interaction log:', error);
+    }
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="flex min-h-screen bg-gray-50 dark:bg-gray-900 mt-4">
       <div className="flex flex-col w-full">
         {/* Header */}
-        <div className="bg-white dark:bg-gray-800 shadow-md z-10">
-          <div className="px-4 md:px-6 lg:px-8 py-4">
-            <div className="flex flex-row md:items-center md:justify-between flex-wrap gap-2">
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white min-w-min">
-                Interaction Logs
-              </h1>
-
-              <div className="relative flex-1 md:flex-none md:ml-auto order-3 md:order-none min-w-full md:min-w-xs">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Search className="h-5 w-5 text-gray-400" />
-                </div>
-                <input
-                  type="text"
-                  placeholder="Search logs..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-emerald-500 focus:border-emerald-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 w-full"
-                />
-              </div>
-
-              <div className="flex items-center gap-2 ml-auto md:ml-0">
-                <button
-                  onClick={() => setView('grid')}
-                  className={`p-2 rounded-md ${
-                    view === 'grid'
-                      ? 'bg-gray-100 dark:bg-gray-700'
-                      : 'hover:bg-gray-100 dark:hover:bg-gray-700'
-                  }`}
-                >
-                  <svg
-                    className="h-5 w-5 text-gray-500 dark:text-gray-400"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"
-                    />
-                  </svg>
-                </button>
-                <button
-                  onClick={() => setView('list')}
-                  className={`p-2 rounded-md ${
-                    view === 'list'
-                      ? 'bg-gray-100 dark:bg-gray-700'
-                      : 'hover:bg-gray-100 dark:hover:bg-gray-700'
-                  }`}
-                >
-                  <svg
-                    className="h-5 w-5 text-gray-500 dark:text-gray-400"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M4 6h16M4 10h16M4 14h16M4 18h16"
-                    />
-                  </svg>
-                </button>
-                <button
-                  onClick={() => setIsModalOpen(true)}
-                  className="inline-flex items-center flex-nowrap px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500"
-                >
-                  <Plus className="h-5 w-5 mr-2" />
-                  Add Interaction
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+        <Header
+          title="Interaction Logs"
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          view={view}
+          setView={setView}
+          setIsModalOpen={setIsModalOpen}
+          startDate={startDate}
+          setStartDate={setStartDate}
+          endDate={endDate}
+          setEndDate={setEndDate}
+          sortField={sortField}
+          setSortField={setSortField}
+          sortOrder={sortOrder}
+          setSortOrder={setSortOrder}
+          sortOptions={sortOptions}
+          resultsCount={logs.length}
+        />
 
         {/* Logs List */}
-        <main className="flex-1 overflow-auto p-0 mt-4">
-          {view === 'grid' ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {logs.map((log) => (
-                <InteractionLogCard key={log.id} log={log} />
-              ))}
+        <div className="flex-1 overflow-auto p-0 mt-4">
+          {view === "grid" ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+              {isLoading
+                ? [...Array(6)].map((_, index) => (
+                    <InteractionLogCardLoader key={index} />
+                  ))
+                : logs.map((log) => (
+                    <InteractionLogCard
+                      key={log.id}
+                      log={log}
+                      onEdit={() => {
+                        setEditLog(log);
+                        setIsEditModalOpen(true);
+                      }}
+                      onDelete={() => {
+                        handleDelete(log.id);
+                      }}
+                    />
+                  ))}
             </div>
           ) : (
             <div className="bg-white dark:bg-gray-800 shadow-sm border border-gray-100 dark:border-gray-700 overflow-auto">
               <table className="divide-y divide-gray-200 dark:divide-gray-700 min-w-full">
                 <thead className="bg-gray-50 dark:bg-gray-700/50">
-                  <tr>
-                    <th 
-                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider cursor-pointer"
-                      onClick={() => handleSort('type')}
-                    >
-                      Type {getSortIcon('type')}
-                    </th>
-                    <th 
-                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider cursor-pointer"
-                      onClick={() => handleSort('date')}
-                    >
-                      Date {getSortIcon('date')}
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                      Notes
-                    </th>
-                    <th 
-                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider cursor-pointer"
-                      onClick={() => handleSort('client')}
-                    >
-                      Client {getSortIcon('client')}
-                    </th>
-                    <th 
-                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider cursor-pointer"
-                      onClick={() => handleSort('project')}
-                    >
-                      Project {getSortIcon('project')}
-                    </th>
-                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                      Actions
-                    </th>
-                  </tr>
+                  <Thead
+                    sortField={sortField}
+                    sortOrder={sortOrder}
+                    handleSort={(field: string) => handleSort(field as SortField)}
+                    options={theadOptions}
+                  />
                 </thead>
                 <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                  {logs.map((log) => (
-                    <InteractionLogRow key={log.id} log={log} />
-                  ))}
+                  {isLoading ? (
+                    [...Array(6)].map((_, index) => (
+                      <ProjectRowLoader key={index} />
+                    ))
+                  ) : (
+                    logs.map((log) => (
+                      <InteractionLogRow
+                        key={log.id}
+                      log={log}
+                      onEdit={() => {
+                        setEditLog(log);
+                        setIsEditModalOpen(true);
+                      }}
+                      onDelete={() => {
+                        handleDelete(log.id);
+                      }}
+                    />
+                  ))
+                  )}
                 </tbody>
               </table>
             </div>
           )}
 
-          {logs.length === 0 && (
+          {logs.length === 0 && !isLoading && (
             <div className="text-center py-12">
               <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 dark:bg-gray-700 mb-4">
                 <Search className="h-8 w-8 text-gray-400" />
@@ -214,14 +204,14 @@ export default function InteractionLogsPage() {
                 Try adjusting your search to find what you&apos;re looking for.
               </p>
               <button
-                onClick={() => setSearchQuery('')}
+                onClick={() => setSearchQuery("")}
                 className="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-emerald-700 bg-emerald-100 hover:bg-emerald-200 dark:text-emerald-100 dark:bg-emerald-900/30 dark:hover:bg-emerald-900/50"
               >
                 Clear search
               </button>
             </div>
           )}
-        </main>
+        </div>
       </div>
 
       <Modal
@@ -233,6 +223,24 @@ export default function InteractionLogsPage() {
           clients={clients}
           onClose={() => {
             setIsModalOpen(false);
+            fetchLogs();
+          }}
+          onUpdate={() => {}}
+        />
+      </Modal>
+      <Modal
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        title="Edit Interaction"
+      >
+        <AddInteractionLog
+          clients={clients}
+          log={editLog}
+          onClose={() => {
+            setIsEditModalOpen(false);
+          }}
+          onUpdate={() => {
+            setIsEditModalOpen(false);
             fetchLogs();
           }}
         />

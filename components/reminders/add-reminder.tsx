@@ -22,7 +22,7 @@ type ReminderFormData = z.infer<typeof reminderSchema>;
 interface AddReminderProps {
   clients: Client[];
   onClose: () => void;
-  reminder?: Reminder;
+  reminder?: Reminder | null;
   clientId?: string;
   projectId?: string;
   onUpdate: (data: Reminder) => void;

@@ -20,8 +20,8 @@ type InteractionLogFormData = z.infer<typeof interactionLogSchema>;
 
 interface AddInteractionLogProps {
   clients: Client[];
-  onClose: () => void;
-  log?: InteractionLog;
+  onClose: (data?: InteractionLog) => void;
+  log?: InteractionLog | null;
   clientId?: string;
   projectId?: string;
   onUpdate: (data: InteractionLog) => void;

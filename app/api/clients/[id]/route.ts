@@ -63,7 +63,7 @@ export async function PUT(
         where: {
           id: params.id,
           userId: user.id,
-        },
+        }, 
         data: {
           name,
           email,
@@ -78,6 +78,55 @@ export async function PUT(
       console.error('Error updating client:', error);
       return NextResponse.json(
         { error: 'Failed to update client' },
+        { status: 500 }
+      );
+    }
+  });
+}
+
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  return withAuth(request, async (user:User) => {
+    try {
+      const { id } = await params;
+      
+      // Delete all associated records first
+      await prisma.project.deleteMany({
+        where: {
+          clientId: id,
+          userId: user.id
+        }
+      });
+
+      await prisma.interactionLog.deleteMany({
+        where: {
+          clientId: id,
+          userId: user.id
+        }
+      });
+
+      await prisma.reminder.deleteMany({
+        where: {
+          clientId: id,
+          userId: user.id
+        }
+      });
+
+      // Then delete the client
+      await prisma.client.delete({
+        where: {
+          id: id,
+          userId: user.id,
+        },
+      });
+
+      return NextResponse.json({ message: "Client deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting client:", error);
+      return NextResponse.json(
+        { error: "Failed to delete client" , message: error },
         { status: 500 }
       );
     }

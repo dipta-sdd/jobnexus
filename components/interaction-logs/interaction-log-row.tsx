@@ -1,73 +1,98 @@
 import { InteractionLog } from '@/lib/types';
+import { Edit, FileText, Mail, Phone, Users, FolderCheck, User, Trash2, Calendar } from 'lucide-react';
+import Link from 'next/link';
+import { Description } from '../ui/Description';
+import formatDateTime from '@/lib/utils/date';
 
 interface InteractionLogRowProps {
   log: InteractionLog;
+  onEdit: () => void;
+  onDelete: () => void;
 }
 
-export default function InteractionLogRow({ log }: InteractionLogRowProps) {
-  const getTypeIcon = (type: string) => {
-    switch (type) {
-      case 'call':
-        return '📞';
-      case 'meeting':
-        return '🤝';
-      case 'email':
-        return '📧';
-      default:
-        return '📝';
-    }
-  };
+export default function InteractionLogRow({ log, onEdit, onDelete }: InteractionLogRowProps) {
 
-  const formatDate = (date: Date) => {
-    const options: Intl.DateTimeFormatOptions = {
-      hour: 'numeric',
-      minute: '2-digit',
-      hour12: true,
-      day: 'numeric',
-      month: 'short',
-      year: 'numeric'
-    };
-    return new Date(date).toLocaleString('en-US', options);
-  };
 
   return (
     <tr className="hover:bg-gray-50 dark:hover:bg-gray-700/30">
       <td className="px-6 py-4 whitespace-nowrap">
         <div className="flex items-center">
-          <span className="text-xl mr-2">{getTypeIcon(log.type)}</span>
-          <div className="text-sm font-medium text-gray-900 dark:text-white capitalize">
+          {log.type === "call" && (
+            <Phone className="h-6 w-6 text-gray-600 dark:text-gray-400" />
+          )}
+          {log.type === "meeting" && (
+            <Users className="h-6 w-6 text-gray-600 dark:text-gray-400" />
+          )}
+          {log.type === "email" && (
+            <Mail className="h-6 w-6 text-gray-600 dark:text-gray-400" />
+          )}
+          {log.type === "note" && (
+            <FileText className="h-6 w-6 text-gray-600 dark:text-gray-400" />
+          )}
+          <div className="text-sm font-medium text-gray-900 dark:text-white capitalize ml-2">
             {log.type}
           </div>
         </div>
       </td>
       <td className="px-6 py-4 whitespace-nowrap">
         <div className="text-sm text-gray-500 dark:text-gray-400">
-          {formatDate(log.date)}
+          <Calendar className="h-4 w-4 inline mr-1 mb-0.5 text-gray-400" />
+          {formatDateTime(log.date)}
         </div>
       </td>
       <td className="px-6 py-4">
-        <div className="text-sm text-gray-900 dark:text-white">
-          {log.notes}
-        </div>
+        <Description text={log.notes} length={100} />
       </td>
       <td className="px-6 py-4 whitespace-nowrap">
         {log.client && (
-          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100">
-            {log.client.name}
-          </span>
+          <Link
+            href={`/clients/${log.client.id}`}
+            className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100"
+          >
+            <User className="h-3 w-3 mr-1" /> {log.client.name}
+          </Link>
         )}
       </td>
       <td className="px-6 py-4 whitespace-nowrap">
         {log.project && (
-          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-100">
-            {log.project.title}
-          </span>
+          <Link
+            href={`/projects/${log.project.id}`}
+            className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-100"
+          >
+            <FolderCheck className="h-3 w-3 mr-1" /> {log.project.title}
+          </Link>
         )}
       </td>
-      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-        <button className="text-emerald-600 hover:text-emerald-900 dark:text-emerald-400 dark:hover:text-emerald-300">
-          Edit
-        </button>
+
+      <td className="px-6 py-4 whitespace-nowrap">
+        <div className="text-sm text-gray-500 dark:text-gray-400">
+          <Calendar className="h-4 w-4 inline mr-1 mb-0.5 text-gray-400" />
+          {formatDateTime(new Date(log?.updatedAt))}
+        </div>
+      </td>
+      <td className="px-6 py-4 whitespace-nowrap">
+        <div className="text-sm text-gray-500 dark:text-gray-400">
+          <Calendar className="h-4 w-4 inline mr-1 mb-0.5 text-gray-400" />
+          {formatDateTime(new Date(log?.createdAt))}
+        </div>
+      </td>
+      <td className="px-6 py-4 whitespace-nowrap ">
+        <div className="flex space-x-1 transition-all duration-200 hover:opacity-100 opacity-30">
+          <button
+            onClick={onEdit}
+            className="p-1.5 rounded-md bg-gray-100 dark:bg-gray-700 hover:bg-blue-100 dark:hover:bg-blue-900 text-muted-foreground hover:text-blue-800 dark:hover:text-blue-100 transition-colors"
+            aria-label="Edit project"
+          >
+            <Edit className="h-3 w-3" />
+          </button>
+          <button
+            onClick={onDelete}
+            className="p-1.5 rounded-md bg-gray-100 dark:bg-gray-700 hover:bg-red-100 dark:hover:bg-red-900 text-muted-foreground hover:text-red-800 dark:hover:text-red-100 transition-colors"
+            aria-label="Delete project"
+          >
+            <Trash2 className="h-3 w-3" />
+          </button>
+        </div>
       </td>
     </tr>
   );

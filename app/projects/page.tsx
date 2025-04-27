@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Plus, Search } from 'lucide-react';
+import { Search } from 'lucide-react';
 import Modal from '@/components/ui/Modal';
 import api from '@/lib/axios';
 import { Client, Project } from '@/lib/types';
@@ -9,43 +9,73 @@ import AddProject from '@/components/projects/add-project';
 import ProjectCard from '@/components/projects/project-card';
 import ProjectRow from '@/components/projects/project-row';
 import Thead from '@/components/THead';
+import Header from '@/components/Header';
+import ProjectCardLoader from '@/components/loaders/project-card-loader';
+import { toast } from 'react-hot-toast';
 
 
 type SortOrder = 'asc' | 'desc';
 
 export default function ProjectsPage() {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [view, setView] = useState('grid'); // grid or list
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [view, setView] = useState<'grid' | 'list'>('grid');
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [projects, setProjects] = useState<Project[]>([]);
+  const [editProject, setEditProject] = useState<Project | null>(null);
   const [sortField, setSortField] = useState<string>('title');
   const [sortOrder, setSortOrder] = useState<SortOrder>('asc');
   const [clients, setClients] = useState<Client[]>([]);
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
   const theadOptions = [
     { label: 'Title', field: 'title', isSortable: true },
     { label: 'Client', field: 'client', isSortable: true },
     { label: 'Budget', field: 'budget', isSortable: true },
     { label: 'Deadline', field: 'deadline', isSortable: true },
     { label: 'Status', field: 'status', isSortable: true },
+    { label: 'Last Updated', field: 'updatedAt', isSortable: true },
+    { label: 'Created At', field: 'createdAt', isSortable: true },
     { label: 'Actions', field: 'actions', isSortable: false },
+  ];
+  const sortOptions = [
+    { label: 'Title (A-Z)', field: 'title', order: 'asc' },
+    { label: 'Title (Z-A)', field: 'title', order: 'desc' },
+    { label: 'Client (A-Z)', field: 'client', order: 'asc' },
+    { label: 'Client (Z-A)', field: 'client', order: 'desc' },
+    { label: 'Budget (Low-High)', field: 'budget', order: 'asc' },
+    { label: 'Budget (High-Low)', field: 'budget', order: 'desc' },
+    { label: 'Deadline (Ascending)', field: 'deadline', order: 'asc' },
+    { label: 'Deadline (Descending)', field: 'deadline', order: 'desc' },
+    { label: 'Status (Ascending)', field: 'status', order: 'asc' },
+    { label: 'Status (Descending)', field: 'status', order: 'desc' },
+    { label: 'Created At (Ascending)', field: 'createdAt', order: 'asc' },
+    { label: 'Created At (Descending)', field: 'createdAt', order: 'desc' },
+    { label: 'Last Updated (Ascending)', field: 'updatedAt', order: 'asc' },
+    { label: 'Last Updated (Descending)', field: 'updatedAt', order: 'desc' },
   ];
 
   const fetchProjects = async () => {
     try {
       const params = new URLSearchParams();
       if (searchQuery) params.append('search', searchQuery);
+      if (startDate) params.append('startDate', startDate);
+      if (endDate) params.append('endDate', endDate);
       params.append('sortField', sortField);
       params.append('sortOrder', sortOrder);
       const res = await api.get(`/projects?${params.toString()}`);
       setProjects(res.data);
+      setIsLoading(false);
     } catch (error) {
       console.error('Error fetching projects:', error);
+      setIsLoading(false);
     }
   };
 
   useEffect(() => {
     fetchProjects();
-  }, [searchQuery, sortField, sortOrder]);
+  }, [searchQuery, startDate, endDate, sortField, sortOrder]);
 
   const handleSort = (field: string) => {
     if (sortField === field) {
@@ -55,8 +85,6 @@ export default function ProjectsPage() {
       setSortOrder('asc');
     }
   };
-
-
 
   const fetchClients = async ()=>{
     try{
@@ -71,94 +99,57 @@ export default function ProjectsPage() {
     fetchClients();
   },[]);
 
+
+  const handleDeleteProject = async (id: string) => {
+    try {
+      await api.delete(`/projects/${id}`);
+      setProjects(projects.filter((project) => project.id !== id));
+      toast.success('Project deleted successfully');
+    } catch (error) {
+      console.error('Error deleting project:', error);
+      toast.error('Failed to delete project');
+    }
+  };
+
   return (
     <div className="flex min-h-screen bg-gray-50 dark:bg-gray-900 mt-4">
       <div className="flex flex-col w-full">
         {/* Header */}
-        <div className="">
-          <div className="">
-            <div className="flex flex-row md:items-center md:justify-between flex-wrap gap-2">
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white min-w-min">
-                Projects
-              </h1>
-
-              <div className="relative flex-1 md:flex-none md:ml-auto order-3 md:order-none min-w-full md:min-w-xs">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Search className="h-5 w-5 text-gray-400" />
-                </div>
-                <input
-                  type="text"
-                  placeholder="Search projects..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-emerald-500 focus:border-emerald-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 w-full"
-                />
-              </div>
-
-              <div className="flex items-center gap-2 ml-auto md:ml-0">
-                <button
-                  onClick={() => setView('grid')}
-                  className={`p-2 rounded-md ${
-                    view === 'grid'
-                      ? 'bg-gray-100 dark:bg-gray-700'
-                      : 'hover:bg-gray-100 dark:hover:bg-gray-700'
-                  }`}
-                >
-                  <svg
-                    className="h-5 w-5 text-gray-500 dark:text-gray-400"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"
-                    />
-                  </svg>
-                </button>
-                <button
-                  onClick={() => setView('list')}
-                  className={`p-2 rounded-md ${
-                    view === 'list'
-                      ? 'bg-gray-100 dark:bg-gray-700'
-                      : 'hover:bg-gray-100 dark:hover:bg-gray-700'
-                  }`}
-                >
-                  <svg
-                    className="h-5 w-5 text-gray-500 dark:text-gray-400"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M4 6h16M4 10h16M4 14h16M4 18h16"
-                    />
-                  </svg>
-                </button>
-                <button
-                  onClick={() => setIsModalOpen(true)}
-                  className="inline-flex items-center flex-nowrap px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500"
-                >
-                  <Plus className="h-5 w-5 mr-2" />
-                  Add Project
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+        <Header
+          title="Projects"
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          view={view}
+          setView={setView}
+          setIsModalOpen={setIsModalOpen}
+          startDate={startDate}
+          setStartDate={setStartDate}
+          endDate={endDate}
+          setEndDate={setEndDate}
+          sortField={sortField}
+          setSortField={setSortField}
+          sortOrder={sortOrder}
+          setSortOrder={setSortOrder}
+          sortOptions={sortOptions}
+          resultsCount={projects.length}
+        />
 
         {/* Projects List */}
         <main className="flex-1 overflow-auto p-0 mt-4">
-          {view === 'grid' ? (
+          {view === "grid" ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {projects.map((project) => (
-                <ProjectCard key={project.id} project={project} />
-              ))}
+              {isLoading
+                ? [...Array(6)].map((_, index) => (
+                    <ProjectCardLoader key={index} />
+                  ))
+                : projects.map((project) => (
+                    <ProjectCard key={project.id} project={project} onEdit={() => {
+                      setEditProject(project);
+                      setIsEditModalOpen(true);
+                    }} onDelete={() => {
+                      handleDeleteProject(project.id);
+                    }} />
+                  ))}
             </div>
           ) : (
             <div className="bg-white dark:bg-gray-800 shadow-sm border border-gray-200 dark:border-gray-700 overflow-auto">
@@ -170,11 +161,15 @@ export default function ProjectsPage() {
                     handleSort={handleSort}
                     options={theadOptions}
                   />
-                  
                 </thead>
                 <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                   {projects.map((project) => (
-                    <ProjectRow key={project.id} project={project} />
+                    <ProjectRow key={project.id} project={project} onEdit={() => {
+                      setEditProject(project);
+                      setIsEditModalOpen(true);
+                    }} onDelete={() => {
+                      handleDeleteProject(project.id);
+                    }} />
                   ))}
                 </tbody>
               </table>
@@ -184,7 +179,7 @@ export default function ProjectsPage() {
           {projects.length === 0 && (
             <div className="text-center py-12">
               <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 dark:bg-gray-700 mb-4">
-                <Search className="h-8 w-8 text-gray-400" />
+                <Search className="h-8 w-8 text-gray-400 dark:text-gray-500" />
               </div>
               <h3 className="text-lg font-medium text-gray-900 dark:text-white">
                 No projects found
@@ -193,8 +188,8 @@ export default function ProjectsPage() {
                 Try adjusting your search to find what you&apos;re looking for.
               </p>
               <button
-                onClick={() => setSearchQuery('')}
-                className="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-emerald-700 bg-emerald-100 hover:bg-emerald-200 dark:text-emerald-100 dark:bg-emerald-900/30 dark:hover:bg-emerald-900/50"
+                onClick={() => setSearchQuery("")}
+                className="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-emerald-700 dark:text-emerald-100 bg-emerald-100 hover:bg-emerald-200 dark:bg-emerald-900/30 dark:hover:bg-emerald-900/50 transition-colors duration-200"
               >
                 Clear search
               </button>
@@ -213,6 +208,25 @@ export default function ProjectsPage() {
           onClose={() => {
             setIsModalOpen(false);
             fetchProjects();
+          }}
+          onUpdate={() => {
+          }}
+        />
+      </Modal>
+      <Modal
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        title="Edit Project"
+      >
+        <AddProject
+          clients={clients}
+          project={editProject}
+          onClose={() => {
+            setIsModalOpen(false);
+          }}
+          onUpdate={() => {
+            fetchProjects();
+            setIsEditModalOpen(false);
           }}
         />
       </Modal>
