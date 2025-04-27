@@ -11,6 +11,57 @@ const loginSchema = z.object({
   password: z.string().min(6),
 });
 
+
+
+/**
+ * @swagger
+ * /api/auth/login:
+ *   post:
+ *     summary: Authenticate user and get JWT token
+ *     description: Authenticates a user with email and password, returns user data and JWT token
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - password
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *               password:
+ *                 type: string
+ *                 minLength: 6
+ *     responses:
+ *       200:
+ *         description: Login successful
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 user:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                     email:
+ *                       type: string
+ *                 token:
+ *                   type: string
+ *       401:
+ *         description: Invalid credentials
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ */
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();

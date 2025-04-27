@@ -1,3 +1,44 @@
+/**
+ * @swagger
+ * /api/reminders/{id}:
+ *   get:
+ *     summary: Get reminder by ID
+ *     description: Retrieves a specific reminder by ID with associated client and project information
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The reminder ID
+ *     responses:
+ *       200:
+ *         description: Reminder retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                 title:
+ *                   type: string
+ *                 notes:
+ *                   type: string
+ *                 dueDate:
+ *                   type: string
+ *                   format: date-time
+ *                 status:
+ *                   type: string
+ *                 client:
+ *                   $ref: '#/components/schemas/Client'
+ *                 project:
+ *                   $ref: '#/components/schemas/Project'
+ *       404:
+ *         description: Reminder not found
+ *       500:
+ *         description: Failed to fetch reminder
+ */
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { withAuth } from '@/lib/middleware/withAuth';
@@ -37,6 +78,62 @@ export async function GET(
   });
 }
 
+/**
+ * @swagger
+ * /api/reminders/{id}:
+ *   put:
+ *     summary: Update reminder
+ *     description: Updates an existing reminder's information
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The reminder ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *               notes:
+ *                 type: string
+ *               dueDate:
+ *                 type: string
+ *                 format: date-time
+ *               status:
+ *                 type: string
+ *               clientId:
+ *                 type: string
+ *               projectId:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Reminder updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                 title:
+ *                   type: string
+ *                 notes:
+ *                   type: string
+ *                 dueDate:
+ *                   type: string
+ *                 client:
+ *                   $ref: '#/components/schemas/Client'
+ *                 project:
+ *                   $ref: '#/components/schemas/Project'
+ *       500:
+ *         description: Failed to update reminder
+ */
 export async function PUT(
   request: NextRequest,
   { params }: { params: { id: string } }
@@ -77,6 +174,32 @@ export async function PUT(
   });
 }
 
+/**
+ * @swagger
+ * /api/reminders/{id}:
+ *   delete:
+ *     summary: Delete reminder
+ *     description: Deletes a specific reminder
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The reminder ID
+ *     responses:
+ *       200:
+ *         description: Reminder deleted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *       500:
+ *         description: Failed to delete reminder
+ */
 export async function DELETE(
   request: NextRequest,
   { params }: { params: { id: string } }

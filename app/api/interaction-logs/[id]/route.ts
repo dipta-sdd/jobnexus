@@ -1,3 +1,41 @@
+/**
+ * @swagger
+ * /api/interaction-logs/{id}:
+ *   get:
+ *     summary: Get interaction log by ID
+ *     description: Retrieves a specific interaction log by ID
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The interaction log ID
+ *     responses:
+ *       200:
+ *         description: Interaction log retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                 type:
+ *                   type: string
+ *                   enum: [call, meeting, email]
+ *                 notes:
+ *                   type: string
+ *                 date:
+ *                   type: string
+ *                   format: date-time
+ *                 clientId:
+ *                   type: string
+ *                 projectId:
+ *                   type: string
+ *       500:
+ *         description: Failed to fetch interaction log
+ */
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { withAuth } from "@/lib/middleware/withAuth";
@@ -28,6 +66,57 @@ export async function GET(
   });
 }
 
+/**
+ * @swagger
+ * /api/interaction-logs/{id}:
+ *   put:
+ *     summary: Update interaction log
+ *     description: Updates an existing interaction log's information
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The interaction log ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               type:
+ *                 type: string
+ *                 enum: [call, meeting, email]
+ *               notes:
+ *                 type: string
+ *               date:
+ *                 type: string
+ *                 format: date-time
+ *               clientId:
+ *                 type: string
+ *               projectId:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Interaction log updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                 type:
+ *                   type: string
+ *                 notes:
+ *                   type: string
+ *                 date:
+ *                   type: string
+ *       500:
+ *         description: Failed to update interaction log
+ */
 export async function PUT(
   request: NextRequest,
   { params }: { params: { id: string } }
@@ -61,7 +150,25 @@ export async function PUT(
   });
 }
 
-
+/**
+ * @swagger
+ * /api/interaction-logs/{id}:
+ *   delete:
+ *     summary: Delete interaction log
+ *     description: Deletes a specific interaction log
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The interaction log ID
+ *     responses:
+ *       200:
+ *         description: Interaction log deleted successfully
+ *       500:
+ *         description: Failed to delete interaction log
+ */
 export async function DELETE(
   request: NextRequest,
   { params }: { params: { id: string } }
