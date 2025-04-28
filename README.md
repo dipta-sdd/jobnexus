@@ -1,5 +1,6 @@
 # FreelanceCRM
-
+LIVE PREVIEW  AT [https://freelancer-crm.nexuspos.store](https://freelancer-crm.nexuspos.store)
+API Docs [https://freelancer-crm.nexuspos.store/api/doc](https://freelancer-crm.nexuspos.store/api/doc)
 ## Features
 
 - **User Authentication**: Secure login and signup functionality
